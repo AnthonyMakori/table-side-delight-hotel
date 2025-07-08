@@ -16,7 +16,7 @@ const Footer = () => {
             <div className="space-y-2 text-primary-foreground/80">
               <p>123 Luxury Street</p>
               <p>Downtown District</p>
-              <p>Phone: +1 (555) 123-4567</p>
+              <p>Phone: +254 707 497 200</p>
               <p>Email: info@grandeurhotel.com</p>
             </div>
           </div>
@@ -33,7 +33,7 @@ const Footer = () => {
         </div>
         
         <div className="border-t border-primary-foreground/20 mt-8 pt-8 text-center text-primary-foreground/60">
-          <p>&copy; 2024 Grandeur Hotel. All rights reserved.</p>
+          <p>&copy; 2025 Grandeur Hotel. All rights reserved.</p>
         </div>
       </div>
     </footer>

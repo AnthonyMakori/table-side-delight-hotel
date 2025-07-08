@@ -87,7 +87,8 @@ const RestaurantSection = () => {
       description: "Dark chocolate soufflé with vanilla ice cream",
       price: 14,
       category: "desserts",
-      allergens: ["dairy", "eggs"]
+      allergens: ["dairy", "eggs"],
+      image: "/choco.jpg",
     },
     {
       id: 8,
