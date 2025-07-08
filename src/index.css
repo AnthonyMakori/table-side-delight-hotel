@@ -2,41 +2,56 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
-All colors MUST be HSL.
-*/
+/* Luxury Hotel Design System - Warm, elegant, and sophisticated */
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
+    /* Core neutral palette */
+    --background: 35 20% 97%;           /* warm cream white */
+    --foreground: 25 15% 15%;           /* rich dark brown */
 
-    --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
+    --card: 35 25% 95%;                 /* soft cream card */
+    --card-foreground: 25 15% 15%;      
 
-    --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
+    --popover: 35 25% 95%;
+    --popover-foreground: 25 15% 15%;
 
-    --primary: 222.2 47.4% 11.2%;
-    --primary-foreground: 210 40% 98%;
+    /* Luxury brand colors */
+    --primary: 160 25% 25%;             /* deep forest green */
+    --primary-foreground: 35 25% 95%;
 
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
+    --secondary: 40 35% 85%;            /* warm beige */
+    --secondary-foreground: 25 15% 15%;
 
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
+    --muted: 40 20% 90%;                /* light neutral */
+    --muted-foreground: 25 10% 45%;
 
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
+    --accent: 45 85% 55%;               /* warm gold accent */
+    --accent-foreground: 25 15% 15%;
 
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
+    /* Status colors */
+    --destructive: 0 70% 55%;
+    --destructive-foreground: 35 25% 95%;
 
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 222.2 84% 4.9%;
+    --success: 160 45% 40%;             /* forest green success */
+    --success-foreground: 35 25% 95%;
 
-    --radius: 0.5rem;
+    --warning: 40 90% 50%;              /* golden warning */
+    --warning-foreground: 25 15% 15%;
+
+    /* UI elements */
+    --border: 40 15% 85%;
+    --input: 40 20% 92%;
+    --ring: 160 25% 25%;
+
+    --radius: 0.75rem;                 /* slightly rounded for elegance */
+
+    /* Luxury design tokens */
+    --gradient-hero: linear-gradient(135deg, hsl(var(--primary)) 0%, hsl(var(--primary) / 0.8) 100%);
+    --gradient-warm: linear-gradient(180deg, hsl(var(--accent) / 0.1) 0%, hsl(var(--secondary) / 0.3) 100%);
+    --shadow-elegant: 0 10px 30px -10px hsl(var(--primary) / 0.2);
+    --shadow-soft: 0 4px 20px -4px hsl(var(--primary) / 0.1);
+    --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 
     --sidebar-background: 0 0% 98%;
 
