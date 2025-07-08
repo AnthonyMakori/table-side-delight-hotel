@@ -21,7 +21,7 @@ const AccommodationSection = () => {
       price: "$499",
       features: ["Separate Living Area", "Panoramic View", "Premium Amenities", "Executive Lounge Access"],
       image: deluxeRoomImage,
-      available: true
+      available:false
     },
     {
       id: 3,
@@ -30,7 +30,7 @@ const AccommodationSection = () => {
       price: "$899",
       features: ["Private Terrace", "Personal Butler", "Exclusive Dining", "Luxury Spa Access"],
       image: deluxeRoomImage,
-      available: false
+      available: true
     }
   ];
 
