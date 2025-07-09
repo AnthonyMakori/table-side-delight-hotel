@@ -13,13 +13,11 @@ const Navigation = () => {
   const menuItems = [
     { label: "Home", href: "#home" },
     { label: "Accommodation", href: "#accommodation" },
+    {label: "Menu", href: "/QR/QRread"}, // Direct link to QR read page
     { label: "Contact", href: "#contact" },
   ];
 
-  const handleMenuClick = () => {
-    navigate("/QR/QRread");
-    setIsOpen(false); // Close mobile sheet if it's open
-  };
+  
 
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 bg-background/95 backdrop-blur-sm border-b">
@@ -41,12 +39,11 @@ const Navigation = () => {
             </Link>
           ))}
           {/* Menu item handled separately */}
-          <button
-            onClick={handleMenuClick}
+          {/* <button
             className="text-foreground hover:text-primary transition-colors"
           >
             Menu
-          </button>
+          </button> */}
 
           <Button variant="outline" size="sm">
             Book Now
@@ -80,14 +77,7 @@ const Navigation = () => {
                   {item.label}
                 </Link>
               ))}
-              {/* Mobile version of Menu item */}
-              <Button
-                onClick={() => { window.location.href = "/QR/QRread"; }}
-                className="text-foreground hover:text-primary transition-colors py-2 text-left"
-              >
-                Menu
-              </Button>
-
+              {/* Mobile version of Menu item */}        
               <Button variant="outline" className="mt-4">
                 Book Now
               </Button>
