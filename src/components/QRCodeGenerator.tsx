@@ -47,7 +47,7 @@ const QRCodeGenerator = ({ onTableSet }: QRCodeGeneratorProps) => {
         width: 512,
         margin: 2,
         color: {
-          dark: '#2d4a3e', // primary color
+          dark: '#2d4a3e', 
           light: '#FFFFFF'
         }
       });
