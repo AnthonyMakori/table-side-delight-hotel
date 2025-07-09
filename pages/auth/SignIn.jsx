@@ -17,18 +17,24 @@ const SignIn = () => {
     e.preventDefault();
     
     // Simple demo login - in real app, this would authenticate with backend
-    if (loginForm.email === "admin@grandhaven.com" && loginForm.password === "admin123") {
+    if (loginForm.email === "admin@granddeur.com" && loginForm.password === "admin123") {
       setIsLoggedIn(true);
       toast({
         title: "Login successful",
         description: "Welcome to the admin dashboard.",
       });
-        // Redirect to admin dashboard or load admin content
-        window.location.href = "/admin/dash"; 
+      window.location.href = "/admin/dash";
+    } else if (loginForm.email === "staff@grandeur.com" && loginForm.password === "staff123") {
+      setIsLoggedIn(true);
+      toast({
+        title: "Login successful",
+        description: "Welcome to the staff dashboard.",
+      });
+      window.location.href = "/staff/dash";
     } else {
       toast({
         title: "Login failed",
-        description: "Invalid credentials. Try admin@grandhaven.com / admin123",
+        description: "Invalid credentials. Try admin@grandeur.com / admin123",
         variant: "destructive"
       });
     }
@@ -40,7 +46,7 @@ const SignIn = () => {
         <Card className="w-full max-w-md bg-card border-border">
           <CardHeader className="text-center">
             <CardTitle className="font-luxury text-3xl text-foreground">
-              Grand Haven
+              Grandeur Hotel
             </CardTitle>
             <p className="text-muted-foreground">Admin & Staff Portal</p>
           </CardHeader>
@@ -53,7 +59,7 @@ const SignIn = () => {
                   type="email"
                   value={loginForm.email}
                   onChange={(e) => setLoginForm({ ...loginForm, email: e.target.value })}
-                  placeholder="admin@grandhaven.com"
+                  placeholder="admin@grandeur.com"
                   required
                 />
               </div>
@@ -77,7 +83,7 @@ const SignIn = () => {
               
               <div className="text-center text-sm text-muted-foreground">
                 Demo credentials:<br />
-                Email: admin@grandhaven.com<br />
+                Email: admin@grandeur.com<br />
                 Password: admin123
               </div>
             </form>
