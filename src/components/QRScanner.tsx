@@ -120,7 +120,7 @@ export function QRScanner({ onScan }: QRScannerProps) {
       {/* Header */}
       <div className="text-center space-y-2 animate-fade-in">
         <h1 className="text-3xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
-          QR Code Scanner
+         Scan the  QR Code On your Table
         </h1>
         <p className="text-muted-foreground">
           Position the QR code within the frame to scan
