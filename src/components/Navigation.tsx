@@ -1,17 +1,25 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
+import { Button2 } from "@/components/ui/button2/button2";
 import { Menu } from "lucide-react";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { Link } from "react-router-dom";
 
 const Navigation = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const navigate = useNavigate();
 
   const menuItems = [
     { label: "Home", href: "#home" },
     { label: "Accommodation", href: "#accommodation" },
-    { label: "Restaurant", href: "#restaurant" },
     { label: "Contact", href: "#contact" },
   ];
+
+  const handleMenuClick = () => {
+    navigate("/QR/QRread");
+    setIsOpen(false); // Close mobile sheet if it's open
+  };
 
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 bg-background/95 backdrop-blur-sm border-b">
@@ -24,41 +32,72 @@ const Navigation = () => {
         {/* Desktop Menu */}
         <div className="hidden md:flex items-center space-x-8">
           {menuItems.map((item) => (
-            <a
+            <Link
               key={item.label}
-              href={item.href}
+              to={item.href}
               className="text-foreground hover:text-primary transition-colors"
             >
               {item.label}
-            </a>
+            </Link>
           ))}
+          {/* Menu item handled separately */}
+          <button
+            onClick={handleMenuClick}
+            className="text-foreground hover:text-primary transition-colors"
+          >
+            Menu
+          </button>
+
           <Button variant="outline" size="sm">
             Book Now
           </Button>
+          <Button2
+            variant="outline"
+            size="sm"
+            onClick={() => { window.location.href = "/auth/signin"; }}
+          >
+            Login
+          </Button2>
         </div>
 
         {/* Mobile Menu */}
         <Sheet open={isOpen} onOpenChange={setIsOpen}>
-          <SheetTrigger asChild className="md:hidden">
-            <Button variant="ghost" size="sm">
+          <SheetTrigger asChild>
+            <Button variant="ghost" size="sm" className="md:hidden">
               <Menu className="h-5 w-5" />
             </Button>
           </SheetTrigger>
+
           <SheetContent side="right" className="w-64">
             <div className="flex flex-col space-y-4 mt-8">
               {menuItems.map((item) => (
-                <a
+                <Link
                   key={item.label}
-                  href={item.href}
-                  className="text-foreground hover:text-primary transition-colors py-2"
+                  to={item.href}
                   onClick={() => setIsOpen(false)}
+                  className="text-foreground hover:text-primary transition-colors py-2"
                 >
                   {item.label}
-                </a>
+                </Link>
               ))}
+              {/* Mobile version of Menu item */}
+              <Button
+                onClick={() => { window.location.href = "/QR/QRread"; }}
+                className="text-foreground hover:text-primary transition-colors py-2 text-left"
+              >
+                Menu
+              </Button>
+
               <Button variant="outline" className="mt-4">
                 Book Now
               </Button>
+              <Button2
+                variant="outline"
+                size="sm"
+                onClick={() => { window.location.href = "/auth/signin"; }}
+              >
+                Login
+              </Button2>
             </div>
           </SheetContent>
         </Sheet>
