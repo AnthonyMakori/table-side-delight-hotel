@@ -6,7 +6,7 @@ import { ShoppingCart } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { menuData, categories } from '../../src/data/menuData';
 import { MenuCard } from '../../src/components/MenuCard';
-import { useCart } from '../../contexts/CartContext';
+import { useCart } from '../../src/contexts/CartContext';
 
 const Menu = () => {
   const [activeCategory, setActiveCategory] = useState('starters');
