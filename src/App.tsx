@@ -7,7 +7,9 @@ import Index from "../pages/Index";
 import NotFound from "../pages/NotFound";
 import  SignIn  from "../pages/auth/SignIn";
 import Admin from "../pages/admin/dash";
-import QR from "../pages/QR/QRread";
+// import QR from "../pages/QR/QRread";
+import Menu from "../pages/menu/Menu";
+import Cart from "../pages/cart/Cart";
 
 const queryClient = new QueryClient();
 
@@ -21,7 +23,9 @@ const App = () => (
           <Route path="/" element={<Index />} />
           <Route path="/auth/signin" element={<SignIn />} /> 
           <Route path ="/admin/dash" element={<Admin />} />
-          <Route path="/QR/QRread" element={<QR />} />
+          {/* <Route path="/QR/QRread" element={<QR />} />  to be connected later back to scanning the Qr code on table */}
+          <Route path="/cart/Cart" element={<Cart />} />
+          <Route path="/menu/Menu" element={<Menu />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
