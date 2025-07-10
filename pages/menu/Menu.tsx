@@ -1,12 +1,12 @@
 import { useState } from 'react';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '../../src/components/ui/tabs';
+import { Badge } from '../../src/components/ui/badge';
+import { Button } from '../../src/components/ui/button';
 import { ShoppingCart } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import { menuData, categories } from '@/data/menuData';
-import { MenuCard } from '@/components/MenuCard';
-import { useCart } from '@/contexts/CartContext';
+import { menuData, categories } from '../../src/data/menuData';
+import { MenuCard } from '../../src/components/MenuCard';
+import { useCart } from '../../src/contexts/CartContext';
 
 const Menu = () => {
   const [activeCategory, setActiveCategory] = useState('starters');
@@ -22,7 +22,7 @@ const Menu = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center">
-              <h1 className="text-2xl font-bold text-foreground">Savory Bites</h1>
+              <h1 className="text-2xl font-bold text-foreground">Grandeur</h1>
               <span className="ml-2 text-sm text-muted-foreground">Restaurant</span>
             </div>
             <Button

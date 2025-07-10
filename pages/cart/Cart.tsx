@@ -1,12 +1,12 @@
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
-import { Label } from '@/components/ui/label';
-import { Separator } from '@/components/ui/separator';
-import { Badge } from '@/components/ui/badge';
+import { Button } from '../../src/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '../../src/components/ui/card';
+import { RadioGroup, RadioGroupItem } from '../../src/components/ui/radio-group';
+import { Label } from '../../src/components/ui/label';
+import { Separator } from '../../src/components/ui/separator';
+import { Badge } from '../../src/components/ui/badge';
 import { ArrowLeft, Minus, Plus, Trash2, CreditCard, Truck, UtensilsCrossed } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import { useCart } from '@/contexts/CartContext';
+import { useCart } from '../../src/contexts/CartContext';
 import { useState } from 'react';
 import { useToast } from '@/hooks/use-toast';
 
