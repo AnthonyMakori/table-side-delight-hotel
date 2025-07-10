@@ -14,11 +14,11 @@ export const RoomCard = ({ room, onViewDetails }: RoomCardProps) => {
   const getStatusVariant = (status: Room['status']) => {
     switch (status) {
       case 'Available':
-        return 'available';
-      case 'Taken':
-        return 'taken';
-      default:
         return 'default';
+      case 'Taken':
+        return 'destructive';
+      default:
+        return 'secondary';
     }
   };
 
@@ -27,7 +27,7 @@ export const RoomCard = ({ room, onViewDetails }: RoomCardProps) => {
       case 'Newly renovated':
         return 'default';
       case 'Needs maintenance':
-        return 'maintenance';
+        return 'destructive';
       default:
         return 'secondary';
     }
