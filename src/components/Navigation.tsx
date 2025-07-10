@@ -12,7 +12,7 @@ const Navigation = () => {
 
   const menuItems = [
     { label: "Home", href: "#home" },
-    { label: "Accommodation", href: "#accommodation" },
+    { label: "Accommodation", href: "/accommodation/Accommodations" },
     {label: "Menu", href: "/menu/Menu"}, 
     { label: "Contact", href: "#contact" },
   ];
