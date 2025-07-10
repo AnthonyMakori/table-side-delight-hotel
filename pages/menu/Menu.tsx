@@ -1,12 +1,12 @@
 import { useState } from 'react';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '../../src/components/ui/tabs';
+import { Badge } from '../../src/components/ui/badge';
+import { Button } from '../../src/components/ui/button';
 import { ShoppingCart } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import { menuData, categories } from '@/data/menuData';
-import { MenuCard } from '@/components/MenuCard';
-import { useCart } from '@/contexts/CartContext';
+import { menuData, categories } from '../../src/data/menuData';
+import { MenuCard } from '../../src/components/MenuCard';
+import { useCart } from '../../contexts/CartContext';
 
 const Menu = () => {
   const [activeCategory, setActiveCategory] = useState('starters');
