@@ -10,6 +10,7 @@ import Admin from "../pages/admin/dash";
 // import QR from "../pages/QR/QRread";
 import Menu from "../pages/menu/Menu";
 import Cart from "../pages/cart/Cart";
+import Accommodations from "../pages/accommodation/Accommodations";
 
 const queryClient = new QueryClient();
 
@@ -26,6 +27,7 @@ const App = () => (
           {/* <Route path="/QR/QRread" element={<QR />} />  to be connected later back to scanning the Qr code on table */}
           <Route path="/cart/Cart" element={<Cart />} />
           {/* <Route path="/menu/Menu" element={<Menu />} /> */}
+          <Route path="accommodation/Accommodations" element={<Accommodations />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
