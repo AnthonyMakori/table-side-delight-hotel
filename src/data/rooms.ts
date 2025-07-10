@@ -1,8 +1,8 @@
 import { Room } from '../../src/types/accommodation';
-import suiteBedImage from '@/assets/room-suite.jpg';
-import doubleRoomImage from '@/assets/room-double.jpg';
-import singleRoomImage from '@/assets/room-single.jpg';
-import penthouseImage from '@/assets/room-penthouse.jpg';
+import suiteBedImage from '@/assets/accomodations/room-suite.jpg';
+import doubleRoomImage from '@/assets/accomodations/room-double.jpg';
+import singleRoomImage from '@/assets/accomodations/room-single.jpg';
+import penthouseImage from '@/assets/accomodations/room-penthouse.jpg';
 
 export const mockRooms: Room[] = [
   {

@@ -7,6 +7,8 @@ import { FilterOptions } from '../../src/types/accommodation';
 import { Grid, List } from 'lucide-react';
 import { Button } from '../../src/components/ui/button';
 import { Skeleton } from '../../src/components/ui/skeleton';
+import {Button3} from '../../src/components/ui/button3';
+import { ArrowLeft } from 'lucide-react';
 
 const Accommodations = () => {
   const navigate = useNavigate();
@@ -98,6 +100,15 @@ const Accommodations = () => {
             Discover comfortable accommodations with modern amenities and exceptional service. 
             From cozy single rooms to luxury penthouses, we have something for every traveler.
           </p>
+          <div className="flex justify-end mb-4">
+          <Button
+            onClick={() => navigate(-1)}
+            className="bg-gradient-to-r from-blue-500 to-blue-700 text-white hover:from-blue-600 hover:to-blue-800 shadow-lg"
+          >
+            <ArrowLeft className="w-4 h-4 mr-2" />
+            Back
+          </Button>
+        </div>
         </div>
 
         {/* Search and Filters */}
