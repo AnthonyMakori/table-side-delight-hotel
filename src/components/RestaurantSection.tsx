@@ -170,10 +170,10 @@ const RestaurantSection = () => {
           </div>
         </div>
 
-        {/* QR Code Section for Staff */}
+        {/* QR Code Section for Staff
         <div className="mb-12">
           <QRCodeGenerator onTableSet={setCurrentTable} />
-        </div>
+        </div> */}
 
         {/* Menu */}
         <div className="grid lg:grid-cols-4 gap-8">
@@ -222,56 +222,6 @@ const RestaurantSection = () => {
                 </TabsContent>
               ))}
             </Tabs>
-          </div>
-
-          {/* Cart Sidebar */}
-          <div className="lg:col-span-1">
-            <Card className="sticky top-24">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <ShoppingCart className="h-5 w-5" />
-                  Your Order
-                  {getTotalItems() > 0 && (
-                    <Badge variant="secondary">{getTotalItems()}</Badge>
-                  )}
-                </CardTitle>
-                {currentTable && (
-                  <CardDescription>Table {currentTable}</CardDescription>
-                )}
-              </CardHeader>
-              <CardContent>
-                {cart.length === 0 ? (
-                  <p className="text-muted-foreground text-center py-8">
-                    Your cart is empty
-                  </p>
-                ) : (
-                  <>
-                    <div className="space-y-3 mb-4">
-                      {cart.map((item) => (
-                        <div key={item.id} className="flex justify-between items-center text-sm">
-                          <div>
-                            <span className="font-medium">{item.name}</span>
-                            <span className="text-muted-foreground ml-2">x{item.quantity}</span>
-                          </div>
-                          <span className="font-medium">${(item.price * item.quantity).toFixed(2)}</span>
-                        </div>
-                      ))}
-                    </div>
-                    
-                    <div className="border-t pt-3 mb-4">
-                      <div className="flex justify-between items-center font-bold">
-                        <span>Total:</span>
-                        <span className="text-accent">${getTotalPrice().toFixed(2)}</span>
-                      </div>
-                    </div>
-                    
-                    <Button className="w-full" disabled={!currentTable}>
-                      Place Order
-                    </Button>
-                  </>
-                )}
-              </CardContent>
-            </Card>
           </div>
         </div>
       </div>
