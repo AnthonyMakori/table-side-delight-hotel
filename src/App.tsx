@@ -11,6 +11,8 @@ import Admin from "../pages/admin/dash";
 import Menu from "../pages/menu/Menu";
 import Cart from "../pages/cart/Cart";
 import Accommodations from "../pages/accommodation/Accommodations";
+import RoomDetail from "../pages/accommodation/RoomDetail";
+
 
 const queryClient = new QueryClient();
 
@@ -28,6 +30,7 @@ const App = () => (
           <Route path="/cart/Cart" element={<Cart />} />
           {/* <Route path="/menu/Menu" element={<Menu />} /> */}
           <Route path="accommodation/Accommodations" element={<Accommodations />} />
+          <Route path="/room/:id" element={<RoomDetail />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
