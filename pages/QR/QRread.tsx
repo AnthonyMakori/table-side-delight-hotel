@@ -1,4 +1,4 @@
-import { QRScanner } from '@/components/QRScanner';
+import { QRScanner } from '../../src/components/QRScanner';
 
 const Index = () => {
   const handleScan = (result: string) => {

@@ -13,7 +13,7 @@ const Navigation = () => {
   const menuItems = [
     { label: "Home", href: "#home" },
     { label: "Accommodation", href: "#accommodation" },
-    {label: "Menu", href: "/QR/QRread"}, // Direct link to QR read page
+    {label: "Menu", href: "/menu/Menu"}, 
     { label: "Contact", href: "#contact" },
   ];
 
@@ -39,12 +39,6 @@ const Navigation = () => {
             </Link>
           ))}
           {/* Menu item handled separately */}
-          {/* <button
-            className="text-foreground hover:text-primary transition-colors"
-          >
-            Menu
-          </button> */}
-
           <Button variant="outline" size="sm">
             Book Now
           </Button>
