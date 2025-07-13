@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { ArrowLeft, Star, MapPin, Square, Calendar, Wifi, Car, Coffee, Tv, Wind, Shield, Users } from 'lucide-react';
 import { mockRooms } from '../../src/data/rooms';
-import { Button } from '../../src/components/ui/button';
+import { Button3 } from '../../src/components/ui/button3';
 import { Badge } from '../../src/components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from '../../src/components/ui/card';
 import { Separator } from '../../src/components/ui/separator';
@@ -55,9 +55,9 @@ const RoomDetail = () => {
       <div className="min-h-screen bg-gradient-card flex items-center justify-center">
         <div className="text-center">
           <h1 className="text-2xl font-bold text-foreground mb-4">Room not found</h1>
-          <Button onClick={() => navigate('/accommodations')}>
+          <Button3 onClick={() => navigate(-1)}>
             Back to Accommodations
-          </Button>
+          </Button3>
         </div>
       </div>
     );
@@ -91,14 +91,14 @@ const RoomDetail = () => {
     <div className="min-h-screen bg-gradient-card">
       <div className="container mx-auto px-4 py-8">
         {/* Back Button */}
-        <Button
+        <Button3
           variant="ghost"
-          onClick={() => navigate('/accommodations')}
+          onClick={() => navigate(-1)}
           className="mb-6 animate-fade-in"
         >
           <ArrowLeft className="w-4 h-4 mr-2" />
           Back to Accommodations
-        </Button>
+        </Button3>
 
         <div className="grid lg:grid-cols-3 gap-8">
           {/* Main Content */}
@@ -278,14 +278,14 @@ const RoomDetail = () => {
                   <div className="space-y-3">
                     <Dialog open={showBookingForm} onOpenChange={setShowBookingForm}>
                       <DialogTrigger asChild>
-                        <Button
+                        <Button3
                           className="w-full bg-green-600 p-1"
                           variant={room.status === 'Available' ? 'default' : 'outline'}
                           disabled={room.status !== 'Available'}
                           onClick={handleBookNow}
                         >
                           {room.status === 'Available' ? 'Book Now' : 'Unavailable'}
-                        </Button>
+                        </Button3>
                       </DialogTrigger>
                       <DialogContent className="max-w-md">
                         <DialogHeader>
@@ -357,16 +357,16 @@ const RoomDetail = () => {
                               onChange={(e) => setBookingData({ ...bookingData, specialRequests: e.target.value })}
                             />
                           </div>
-                          <Button onClick={submitBooking} className="w-full" variant="default">
+                          <Button3 onClick={submitBooking} className="w-full" variant="default">
                             Confirm Booking
-                          </Button>
+                          </Button3>
                         </div>
                       </DialogContent>
                     </Dialog>
 
-                    <Button variant="outline" className="w-full">
+                    <Button3 variant="outline" className="w-full">
                       Contact for Details
-                    </Button>
+                    </Button3>
                   </div>
 
                   {/* Quick Info */}
