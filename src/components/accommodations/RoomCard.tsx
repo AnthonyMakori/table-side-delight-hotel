@@ -1,4 +1,4 @@
-import { Star, MapPin, Users, Square } from 'lucide-react';
+import { Star, MapPin, Square } from 'lucide-react';
 import { Room } from '@/types/accommodation';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -11,25 +11,27 @@ interface RoomCardProps {
 }
 
 export const RoomCard = ({ room, onViewDetails }: RoomCardProps) => {
-  const getStatusVariant = (status: Room['status']) => {
+  const getStatusBadgeClass = (status: Room['status']) => {
     switch (status) {
       case 'Available':
-        return 'default';
+        return 'bg-green-600 text-white';
       case 'Taken':
-        return 'destructive';
+        return 'bg-red-600 text-white';
       default:
-        return 'secondary';
+        return 'bg-muted text-foreground';
     }
   };
 
-  const getConditionVariant = (condition: Room['condition']) => {
+  const getConditionBadgeClass = (condition: Room['condition']) => {
     switch (condition) {
       case 'Newly renovated':
-        return 'default';
+        return 'bg-blue-600 text-white';
       case 'Needs maintenance':
-        return 'destructive';
+        return 'bg-red-600 text-white';
+        case 'Standard':
+      return 'bg-yellow-400 text-black';
       default:
-        return 'secondary';
+        return 'bg-muted text-foreground';
     }
   };
 
@@ -42,36 +44,51 @@ export const RoomCard = ({ room, onViewDetails }: RoomCardProps) => {
           className="w-full h-48 object-cover transition-transform duration-300 group-hover:scale-110"
           loading="lazy"
         />
+
+        {/* Top Left Badges */}
         <div className="absolute top-3 left-3 flex gap-2">
-          <Badge variant={getStatusVariant(room.status)}>
+          <Badge className={cn(getStatusBadgeClass(room.status))}>
             {room.status}
           </Badge>
-          <Badge variant={getConditionVariant(room.condition)}>
+          <Badge className={cn(getConditionBadgeClass(room.condition))}>
             {room.condition}
           </Badge>
         </div>
+
+        {/* Rating Badge */}
         <div className="absolute top-3 right-3">
           <Badge variant="secondary" className="bg-background/90 backdrop-blur-sm">
-            <Star className="w-3 h-3 fill-yellow-400 text-yellow-400 mr-1" />
+            <Star className="w-3 h-3 fill-blue-600 text-yellow-400 mr-1" />
             {room.rating}
           </Badge>
         </div>
       </div>
 
       <CardContent className="p-4">
+        {/* Title & Type */}
         <div className="flex items-start justify-between mb-2">
-          <h3 className="font-semibold text-lg text-foreground group-hover:text-primary transition-colors">
+          <h3 className="font-semibold text-lg text-foreground group-hover:text-blue-600 transition-colors">
             {room.name}
           </h3>
-          <span className="text-xs text-muted-foreground bg-accent px-2 py-1 rounded">
-            {room.type}
-          </span>
+          <span
+              className={cn(
+                "text-xs px-2 py-1 rounded",
+                ['Single', 'Penthouse', 'Suite', 'Double'].includes(room.type)
+                  ? 'bg-red-100 text-foreground'
+                  : 'bg-accent text-muted-foreground'
+              )}
+            >
+              {room.type}
+            </span>
+
         </div>
 
+        {/* Description */}
         <p className="text-muted-foreground text-sm mb-3 line-clamp-2">
           {room.shortDescription}
         </p>
 
+        {/* Room Info */}
         <div className="flex items-center gap-4 text-xs text-muted-foreground mb-3">
           <div className="flex items-center gap-1">
             <Square className="w-3 h-3" />
@@ -85,9 +102,10 @@ export const RoomCard = ({ room, onViewDetails }: RoomCardProps) => {
           )}
         </div>
 
+        {/* Price */}
         <div className="flex items-center justify-between">
           <div className="text-sm">
-            <span className="font-bold text-lg text-primary">${room.price.night}</span>
+            <span className="font-bold text-lg text-blue-600">${room.price.night}</span>
             <span className="text-muted-foreground"> /night</span>
           </div>
           <div className="text-xs text-muted-foreground">
@@ -99,8 +117,12 @@ export const RoomCard = ({ room, onViewDetails }: RoomCardProps) => {
       <CardFooter className="p-4 pt-0">
         <Button
           onClick={() => onViewDetails(room.id)}
-          className="w-full"
-          variant={room.status === 'Available' ? 'default' : 'outline'}
+          className={cn(
+            'w-full',
+            room.status === 'Available'
+              ? 'bg-blue-600 hover:bg-blue-700 text-white'
+              : 'bg-muted text-muted-foreground cursor-not-allowed'
+          )}
           disabled={room.status === 'Taken'}
         >
           {room.status === 'Available' ? 'View Details' : 'Unavailable'}

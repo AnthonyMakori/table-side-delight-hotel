@@ -183,7 +183,7 @@ const RoomDetail = () => {
                       const IconComponent = featureIcons[feature] || Shield;
                       return (
                         <div key={feature} className="flex items-center gap-2 text-sm">
-                          <IconComponent className="w-4 h-4 text-primary" />
+                          <IconComponent className="w-4 h-4 text-blue-500" />
                           <span>{feature}</span>
                         </div>
                       );
@@ -212,7 +212,7 @@ const RoomDetail = () => {
                           <div className="flex items-center gap-2 mb-1">
                             <span className="font-medium">{review.userName}</span>
                             {review.verified && (
-                              <Badge variant="secondary" className="text-xs">
+                              <Badge variant="secondary" className="text-xs" color='bg-yellow-600 rounded-full w-[80px] text-center'>
                                 Verified
                               </Badge>
                             )}
