@@ -152,7 +152,7 @@ const RoomDetail = () => {
 
                 <div className="grid md:grid-cols-2 gap-6 mb-6">
                   <div className="flex items-center gap-3">
-                    <Square className="w-5 h-5 text-primary" />
+                    <Square className="w-5 h-5 text-blue-600" />
                     <div>
                       <div className="font-medium">Room Size</div>
                       <div className="text-sm text-muted-foreground">
@@ -162,7 +162,7 @@ const RoomDetail = () => {
                   </div>
                   {room.location && (
                     <div className="flex items-center gap-3">
-                      <MapPin className="w-5 h-5 text-primary" />
+                      <MapPin className="w-5 h-5 text-blue-600" />
                       <div>
                         <div className="font-medium">Location</div>
                         <div className="text-sm text-muted-foreground">
