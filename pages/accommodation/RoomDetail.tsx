@@ -112,16 +112,20 @@ const RoomDetail = () => {
                   className="w-full h-96 object-cover"
                 />
                 <div className="absolute top-4 left-4 flex gap-2">
-                  <Badge variant={room.status === 'Available' ? 'default' : 'secondary'}>
+                  <Badge variant={room.status === 'Available' ? 'default' : 'destructive'}
+                  color="bg-green-600 text-white hover:bg-green-700 rounded-full w-[150px] text-center"
+                  >
                     {room.status}
                   </Badge>
-                  <Badge variant={room.condition === 'Newly renovated' ? 'default' : 'secondary'}>
+                  <Badge
+                    variant={room.condition === 'Newly renovated' ? 'default' : 'destructive'}
+                    color="bg-blue-500 text-white hover:bg-blue-700 rounded-full w-[150px] text-center"
+                  >
                     {room.condition}
                   </Badge>
                 </div>
               </div>
             </div>
-
             {/* Room Info */}
             <Card className="animate-slide-up">
               <CardHeader>
@@ -129,7 +133,7 @@ const RoomDetail = () => {
                   <div>
                     <CardTitle className="text-2xl text-foreground">{room.name}</CardTitle>
                     <div className="flex items-center gap-4 mt-2 text-muted-foreground">
-                      <span className="bg-accent px-3 py-1 rounded-full text-sm font-medium">
+                      <span className="bg-red-100 px-3 py-1 rounded-full text-sm font-medium">
                         {room.type}
                       </span>
                       <div className="flex items-center gap-1">
@@ -369,7 +373,7 @@ const RoomDetail = () => {
                     </Button3>
                   </div>
 
-                  {/* Quick Info */}
+                  {/* Quick Info on confirming booking */}
                   <div className="text-xs text-muted-foreground space-y-1 pt-4 border-t border-border">
                     <div>✓ Free WiFi included</div>
                     <div>✓ Daily housekeeping</div>
