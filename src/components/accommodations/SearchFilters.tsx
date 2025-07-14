@@ -173,7 +173,7 @@ export const SearchFilters = ({
                 <h4 className="font-medium mb-3">Room Type</h4>
                 <div className="grid grid-cols-2 gap-3">
                   {roomTypes.map((type) => (
-                    <div key={type} className="flex items-center space-x-2">
+                    <div key={type} className="flex items-center space-x-2 border-b border-muted pb-2">
                       <Checkbox
                         id={type}
                         checked={filters.type.includes(type)}
@@ -190,7 +190,7 @@ export const SearchFilters = ({
               {/* Price Range Filter */}
               <div>
                 <h4 className="font-medium mb-3">Price Range (per night)</h4>
-                <div className="px-3">
+                <div className="px-3 ">
                   <Slider
                     min={0}
                     max={1000}
