@@ -9,6 +9,7 @@ import { Button } from '../../src/components/ui/button';
 import { Skeleton } from '../../src/components/ui/skeleton';
 import {Button3} from '../../src/components/ui/button3';
 import { ArrowLeft } from 'lucide-react';
+import { cn } from '@/lib/utils';
 
 const Accommodations = () => {
   const navigate = useNavigate();
@@ -131,19 +132,31 @@ const Accommodations = () => {
           </h2>
           <div className="flex gap-2">
             <Button
-              variant={viewMode === 'grid' ? 'default' : 'outline'}
               size="sm"
               onClick={() => setViewMode('grid')}
+              className={cn(
+                'text-white',
+                viewMode === 'grid'
+                  ? 'bg-blue-600 hover:bg-blue-700'
+                  : 'bg-transparent border border-blue-600 text-blue-600 hover:bg-blue-100'
+              )}
             >
               <Grid className="w-4 h-4" />
             </Button>
+
             <Button
-              variant={viewMode === 'list' ? 'default' : 'outline'}
               size="sm"
               onClick={() => setViewMode('list')}
+              className={cn(
+                'text-white',
+                viewMode === 'list'
+                  ? 'bg-blue-600 hover:bg-blue-700'
+                  : 'bg-transparent border border-blue-600 text-blue-600 hover:bg-blue-100'
+              )}
             >
               <List className="w-4 h-4" />
             </Button>
+
           </div>
         </div>
 

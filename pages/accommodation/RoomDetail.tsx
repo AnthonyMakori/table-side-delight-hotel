@@ -112,16 +112,20 @@ const RoomDetail = () => {
                   className="w-full h-96 object-cover"
                 />
                 <div className="absolute top-4 left-4 flex gap-2">
-                  <Badge variant={room.status === 'Available' ? 'default' : 'secondary'}>
+                  <Badge variant={room.status === 'Available' ? 'default' : 'destructive'}
+                  color="bg-green-600 text-white hover:bg-green-700 rounded-full w-[150px] text-center"
+                  >
                     {room.status}
                   </Badge>
-                  <Badge variant={room.condition === 'Newly renovated' ? 'default' : 'secondary'}>
+                  <Badge
+                    variant={room.condition === 'Newly renovated' ? 'default' : 'destructive'}
+                    color="bg-blue-500 text-white hover:bg-blue-700 rounded-full w-[150px] text-center"
+                  >
                     {room.condition}
                   </Badge>
                 </div>
               </div>
             </div>
-
             {/* Room Info */}
             <Card className="animate-slide-up">
               <CardHeader>
@@ -129,7 +133,7 @@ const RoomDetail = () => {
                   <div>
                     <CardTitle className="text-2xl text-foreground">{room.name}</CardTitle>
                     <div className="flex items-center gap-4 mt-2 text-muted-foreground">
-                      <span className="bg-accent px-3 py-1 rounded-full text-sm font-medium">
+                      <span className="bg-red-100 px-3 py-1 rounded-full text-sm font-medium">
                         {room.type}
                       </span>
                       <div className="flex items-center gap-1">
@@ -148,7 +152,7 @@ const RoomDetail = () => {
 
                 <div className="grid md:grid-cols-2 gap-6 mb-6">
                   <div className="flex items-center gap-3">
-                    <Square className="w-5 h-5 text-primary" />
+                    <Square className="w-5 h-5 text-blue-600" />
                     <div>
                       <div className="font-medium">Room Size</div>
                       <div className="text-sm text-muted-foreground">
@@ -158,7 +162,7 @@ const RoomDetail = () => {
                   </div>
                   {room.location && (
                     <div className="flex items-center gap-3">
-                      <MapPin className="w-5 h-5 text-primary" />
+                      <MapPin className="w-5 h-5 text-blue-600" />
                       <div>
                         <div className="font-medium">Location</div>
                         <div className="text-sm text-muted-foreground">
@@ -179,7 +183,7 @@ const RoomDetail = () => {
                       const IconComponent = featureIcons[feature] || Shield;
                       return (
                         <div key={feature} className="flex items-center gap-2 text-sm">
-                          <IconComponent className="w-4 h-4 text-primary" />
+                          <IconComponent className="w-4 h-4 text-blue-500" />
                           <span>{feature}</span>
                         </div>
                       );
@@ -208,7 +212,7 @@ const RoomDetail = () => {
                           <div className="flex items-center gap-2 mb-1">
                             <span className="font-medium">{review.userName}</span>
                             {review.verified && (
-                              <Badge variant="secondary" className="text-xs">
+                              <Badge variant="secondary" className="text-xs" color='bg-yellow-600 rounded-full w-[80px] text-center'>
                                 Verified
                               </Badge>
                             )}
@@ -369,7 +373,7 @@ const RoomDetail = () => {
                     </Button3>
                   </div>
 
-                  {/* Quick Info */}
+                  {/* Quick Info on confirming booking */}
                   <div className="text-xs text-muted-foreground space-y-1 pt-4 border-t border-border">
                     <div>✓ Free WiFi included</div>
                     <div>✓ Daily housekeeping</div>

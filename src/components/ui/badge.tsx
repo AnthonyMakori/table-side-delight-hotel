@@ -25,11 +25,20 @@ const badgeVariants = cva(
 
 export interface BadgeProps
   extends React.HTMLAttributes<HTMLDivElement>,
-    VariantProps<typeof badgeVariants> {}
+    VariantProps<typeof badgeVariants> {
+  /**
+   * Optional Tailwind classes for text and background color override,
+   * e.g. `text-white bg-green-600`
+   */
+  color?: string
+}
 
-function Badge({ className, variant, ...props }: BadgeProps) {
+function Badge({ className, variant, color, ...props }: BadgeProps) {
   return (
-    <div className={cn(badgeVariants({ variant }), className)} {...props} />
+    <div
+      className={cn(color ? `text-white ${color}` : badgeVariants({ variant }), className)}
+      {...props}
+    />
   )
 }
 
