@@ -1,6 +1,7 @@
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
+import { CartProvider } from './contexts/CartContext';
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Index from "../pages/Index";
@@ -18,6 +19,7 @@ const queryClient = new QueryClient();
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
+    <CartProvider>
     <TooltipProvider>
       <Toaster />
       <Sonner />
@@ -26,15 +28,16 @@ const App = () => (
           <Route path="/" element={<Index />} />
           <Route path="/auth/signin" element={<SignIn />} /> 
           <Route path ="/admin/dash" element={<Admin />} />
-          {/* <Route path="/QR/QRread" element={<QR />} />  to be connected later back to scanning the Qr code on table */}
-          <Route path="/cart/Cart" element={<Cart />} />
-          {/* <Route path="/menu/Menu" element={<Menu />} /> */}
+          {/* <Route path="/QR/QRread" element={<QR />} />  to be connected  back later to scanning the Qr code on table */}
+          <Route path="/cart" element={<Cart />} />
+          <Route path="/menu/Menu" element={<Menu />} />
           <Route path="accommodation/Accommodations" element={<Accommodations />} />
           <Route path="/room/:id" element={<RoomDetail />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
     </TooltipProvider>
+    </CartProvider>
   </QueryClientProvider>
 );
 

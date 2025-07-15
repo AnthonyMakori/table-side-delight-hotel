@@ -71,7 +71,7 @@ const Cart = () => {
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center h-16">
             <Button
-              onClick={() => navigate('/')}
+              onClick={() => navigate(-1)}
               variant="ghost"
               size="sm"
               className="mr-4"
@@ -196,7 +196,7 @@ const Cart = () => {
               onClick={handlePlaceOrder}
               variant="default"
               size="lg"
-              className="w-full"
+              className="w-full bg-blue-600 hover:bg-green-600 text-white"
             >
               Place Order - ${state.total.toFixed(2)}
             </Button>

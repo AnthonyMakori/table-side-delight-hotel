@@ -57,11 +57,12 @@ export const MenuCard: React.FC<MenuCardProps> = ({ item }) => {
           onClick={handleAddToCart}
           variant="default"
           size="sm"
-          className="w-full"
+          className="w-full bg-gradient-to-r from-blue-600 to-blue-400 hover:from-blue-700 hover:to-blue-500 text-white shadow-md"
         >
           <Plus className="w-4 h-4 mr-1" />
           Add to Cart
         </Button>
+
       </CardContent>
     </Card>
   );
