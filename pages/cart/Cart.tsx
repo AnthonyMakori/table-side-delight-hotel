@@ -54,7 +54,7 @@ const Cart = () => {
             <p className="text-muted-foreground mb-6">
               Looks like you haven't added any delicious items to your cart yet.
             </p>
-            <Button onClick={() => navigate('/')} variant="default" className="w-full">
+            <Button onClick={() => navigate(-1)} variant="default" className="w-full">
               <ArrowLeft className="w-4 h-4 mr-2" />
               Browse Menu
             </Button>
