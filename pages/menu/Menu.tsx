@@ -13,8 +13,6 @@ const Menu = () => {
   const { itemCount } = useCart();
   const navigate = useNavigate();
 
-  const filteredItems = menuData.filter(item => item.category === activeCategory);
-
   return (
     <div className="min-h-screen bg-gradient-food">
       {/* Header */}
@@ -28,7 +26,7 @@ const Menu = () => {
             <Button
               onClick={() => navigate('/cart')}
               variant="default"
-              className="relative"
+              className="relative bg-blue-600 hover:bg-blue-800 text-white flex items-center"
             >
               <ShoppingCart className="w-5 h-5 mr-2" />
               Cart
@@ -49,9 +47,7 @@ const Menu = () => {
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Hero Section */}
         <div className="text-center mb-12">
-          <h2 className="text-4xl md:text-5xl font-bold text-foreground mb-4">
-            Our Menu
-          </h2>
+          <h2 className="text-4xl md:text-5xl font-bold text-foreground mb-4">Our Menu</h2>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
             Discover our carefully crafted dishes made with the finest ingredients and passion for great taste.
           </p>
@@ -76,9 +72,11 @@ const Menu = () => {
           {categories.map((category) => (
             <TabsContent key={category.id} value={category.id}>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                {filteredItems.map((item) => (
-                  <MenuCard key={item.id} item={item} />
-                ))}
+                {menuData
+                  .filter((item) => item.category === category.id)
+                  .map((item) => (
+                    <MenuCard key={item.id} item={item} />
+                  ))}
               </div>
             </TabsContent>
           ))}
