@@ -28,7 +28,7 @@ const App = () => (
           <Route path="/" element={<Index />} />
           <Route path="/auth/signin" element={<SignIn />} /> 
           <Route path ="/admin/dash" element={<Admin />} />
-          {/* <Route path="/QR/QRread" element={<QR />} />  to be connected  back later to scanning the Qr code on table */}
+          {/* <Route path="/QR/QRread" element={<QR />} />  */}
           <Route path="/cart" element={<Cart />} />
           <Route path="/menu/Menu" element={<Menu />} />
           <Route path="accommodation/Accommodations" element={<Accommodations />} />
