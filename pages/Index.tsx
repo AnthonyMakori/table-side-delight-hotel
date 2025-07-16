@@ -1,8 +1,9 @@
-import Navigation from "@/components/Navigation";
-import HeroSection from "@/components/HeroSection";
-import AccommodationSection from "@/components/AccommodationSection";
-import RestaurantSection from "@/components/RestaurantSection";
-import Footer from "@/components/Footer";
+import Navigation from "../src/components/Navigation";
+import HeroSection from "../src/components/HeroSection";
+import AccommodationSection from "../src/components/AccommodationSection";
+import RestaurantSection from "../src/components/RestaurantSection";
+import Footer from "../src/components/Footer";
+import Display from "../src/components/display/Display";
 
 const Index = () => {
   return (
@@ -11,6 +12,7 @@ const Index = () => {
       <HeroSection />
       <AccommodationSection />
       <RestaurantSection />
+      <Display />
       <Footer />
     </div>
   );
