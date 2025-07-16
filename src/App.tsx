@@ -23,6 +23,7 @@ import Staff from "../pages/Admin/Staff";
 import Reports from "../pages/Admin/Reports";
 
 
+
 const queryClient = new QueryClient();
 
 const App = () => (
@@ -39,6 +40,7 @@ const App = () => (
           <Route path="/cart" element={<Cart />} />
           <Route path="/menu/Menu" element={<Menu />} />
           <Route path="accommodation/Accommodations" element={<Accommodations />} />
+          <Route path="/Admin/Dashboard" element={<Dashboard />} />
           <Route path="/accommodations" element={<AccommodationsAdmin />} />
           <Route path="/meals" element={<Meals />} />
           <Route path="/qr-codes" element={<QRCodes />} />

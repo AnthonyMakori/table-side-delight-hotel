@@ -17,13 +17,13 @@ const SignIn = () => {
     e.preventDefault();
     
     // Simple demo login - in real app, this would authenticate with backend
-    if (loginForm.email === "admin@granddeur.com" && loginForm.password === "admin123") {
+    if (loginForm.email === "admin@grandeur.com" && loginForm.password === "admin123") {
       setIsLoggedIn(true);
       toast({
         title: "Login successful",
         description: "Welcome to the admin dashboard.",
       });
-      window.location.href = "/admin/dash";
+      window.location.href = "/Admin/Dashboard";
     } else if (loginForm.email === "staff@grandeur.com" && loginForm.password === "staff123") {
       setIsLoggedIn(true);
       toast({
@@ -83,8 +83,10 @@ const SignIn = () => {
               
               <div className="text-center text-sm text-muted-foreground">
                 Demo credentials:<br />
-                Email: admin@grandeur.com<br />
-                Password: admin123
+                Admin Email: admin@grandeur.com<br />
+                Password: admin123<br />
+                Staff Email: staff@grandeur.com<br />
+                Password: staff123
               </div>
             </form>
           </CardContent>

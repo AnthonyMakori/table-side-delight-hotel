@@ -4,6 +4,9 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
+import { Sidebar } from "@/components/Sidebar"; 
+
+
 import { 
   Users, 
   Plus, 
@@ -91,17 +94,24 @@ export default function Staff() {
   };
 
   return (
-    <div className="p-6 space-y-6">
-      <div className="flex justify-between items-center">
-        <div>
-          <h1 className="text-3xl font-bold">Staff Management</h1>
-          <p className="text-muted-foreground">Manage hotel staff and their permissions</p>
-        </div>
-        <Button onClick={() => setShowAddStaff(true)} className="flex items-center gap-2">
-          <Plus className="h-4 w-4" />
-          Add Staff Member
-        </Button>
+    <div className="flex min-h-screen overflow-hidden">
+  {/* Sidebar */}
+  <div className="fixed">
+  <Sidebar />
+  </div>
+  {/* Main Content */}
+  <div className=" flex-1 flex flex-col gap-6 p-6 overflow-y-auto bg-white ml-64">
+    {/* Page Header */}
+    <div className="flex justify-between items-center">
+      <div>
+        <h1 className="text-3xl font-bold">Staff Management</h1>
+        <p className="text-muted-foreground">Manage hotel staff and their permissions</p>
       </div>
+      <Button onClick={() => setShowAddStaff(true)} className="flex items-center gap-2">
+        <Plus className="h-4 w-4" />
+        Add Staff Member
+      </Button>
+    </div>
 
       {/* Staff Stats */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
@@ -324,5 +334,6 @@ export default function Staff() {
         </div>
       )}
     </div>
+  </div>
   );
 }
