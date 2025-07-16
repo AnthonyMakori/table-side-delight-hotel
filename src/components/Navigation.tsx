@@ -39,9 +39,12 @@ const Navigation = () => {
             </Link>
           ))}
           {/* Menu item handled separately */}
-          <Button variant="outline" size="sm">
-            Book Now
-          </Button>
+          <Button 
+              variant="outline"
+              size="sm" 
+              onClick={() => { window.location.href = "/auth/LoginForm"; }}>
+                Staff
+              </Button>
           <Button2
             variant="outline"
             size="sm"
@@ -72,8 +75,12 @@ const Navigation = () => {
                 </Link>
               ))}
               {/* Mobile version of Menu item */}        
-              <Button variant="outline" className="mt-4">
-                Book Now
+              <Button 
+              variant="outline"
+              size="sm" 
+              className="mt-4"
+              onClick={() => { window.location.href = "/auth/LoginForm"; }}>
+                Staff
               </Button>
               <Button2
                 variant="outline"

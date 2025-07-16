@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Button } from '../../src/components/ui/button';
 import { Input } from '../../src/components/ui/input';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../../src/components/ui/card';
@@ -11,19 +12,39 @@ const LoginForm: React.FC = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
-  const { login, isLoading } = useAuth();
+  const { login, isLoading, currentStaff } = useAuth();
   const { toast } = useToast();
+  const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     const success = await login(email, password);
-    
-    if (success) {
+
+    if (success && currentStaff) {
       toast({
         title: 'Welcome back!',
         description: 'Successfully logged in to the staff dashboard.',
       });
+
+      // Redirect based on role
+      switch (currentStaff.role) {
+        case 'receptionist':
+          navigate('/components/dashboards/ReceptionistDashboard');
+          break;
+        case 'kitchen':
+          navigate('/components/dashboards/KitchenDashboard');
+          break;
+        case 'waiter':
+          navigate('/components/dashboards/WaiterDashboard');
+          break;
+        default:
+          toast({
+            title: 'Unknown Role',
+            description: 'No dashboard found for this role.',
+            variant: 'destructive',
+          });
+      }
     } else {
       toast({
         title: 'Login failed',
@@ -79,7 +100,7 @@ const LoginForm: React.FC = () => {
                   className="transition-all duration-200 focus:ring-2 focus:ring-primary"
                 />
               </div>
-              
+
               <div className="space-y-2">
                 <label className="text-sm font-medium">Password</label>
                 <div className="relative">
@@ -103,8 +124,8 @@ const LoginForm: React.FC = () => {
                 </div>
               </div>
 
-              <Button 
-                type="submit" 
+              <Button
+                type="submit"
                 className="w-full bg-gradient-hotel hover:shadow-hotel transition-all duration-200"
                 disabled={isLoading}
               >
