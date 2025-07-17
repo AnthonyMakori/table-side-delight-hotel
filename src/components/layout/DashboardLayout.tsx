@@ -98,7 +98,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
                 <div className="flex items-center space-x-2">
                   <Badge 
                     variant="secondary" 
-                    className={`text-xs ${getRoleColor(currentStaff.role)}`}
+                    className={`text-xs  ${getRoleColor(currentStaff.role)}`}
                   >
                     {getRoleIcon(currentStaff.role)}
                     <span className="ml-1 capitalize">{currentStaff.role}</span>
@@ -107,7 +107,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
               </div>
               
               <Avatar className="h-8 w-8 ring-2 ring-primary/20">
-                <AvatarFallback className="bg-gradient-gold text-accent-foreground font-semibold">
+                <AvatarFallback className="bg-yellow-400 text-blue-600 font-semibold">
                   {currentStaff.name.split(' ').map(n => n[0]).join('')}
                 </AvatarFallback>
               </Avatar>
