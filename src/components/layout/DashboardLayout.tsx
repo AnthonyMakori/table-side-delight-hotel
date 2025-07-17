@@ -70,7 +70,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
                 <Hotel className="h-6 w-6 text-primary-foreground" />
               </div>
               <div>
-                <h1 className="text-xl font-bold text-foreground">Grand Hotel</h1>
+                <h1 className="text-xl font-bold text-foreground">Grandeur Hotel</h1>
                 <p className="text-xs text-muted-foreground">Staff Dashboard</p>
               </div>
             </div>

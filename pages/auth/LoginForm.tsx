@@ -66,7 +66,7 @@ const LoginForm: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-hotel flex items-center justify-center p-4">
+    <div className="min-h-screen bg-blue-600 flex items-center justify-center p-4">
       <div className="w-full max-w-md space-y-6">
         {/* Logo & Header */}
         <div className="text-center text-primary-foreground">
@@ -75,7 +75,7 @@ const LoginForm: React.FC = () => {
               <Hotel className="h-8 w-8 text-primary" />
             </div>
           </div>
-          <h1 className="text-3xl font-bold">Grand Hotel</h1>
+          <h1 className="text-3xl font-bold">Grandeur Hotel</h1>
           <p className="text-primary-foreground/80">Staff Dashboard</p>
         </div>
 
@@ -126,7 +126,7 @@ const LoginForm: React.FC = () => {
 
               <Button
                 type="submit"
-                className="w-full bg-gradient-hotel hover:shadow-hotel transition-all duration-200"
+                className="w-full bg-blue-600 transition-all duration-200"
                 disabled={isLoading}
               >
                 {isLoading ? (
