@@ -112,7 +112,7 @@ const ReceptionistDashboard: React.FC = () => {
       actions={
         <Button
           onClick={() => setShowBookingForm(true)}
-          className="bg-gradient-hotel hover:shadow-hotel"
+          className="bg-blue-600 hover:shadow-hotel"
         >
           <Plus className="mr-2 h-4 w-4" />
           New Booking
@@ -121,7 +121,7 @@ const ReceptionistDashboard: React.FC = () => {
     >
       {/* Stats Cards */}
       <div className="grid grid-cols-2 lg:grid-cols-6 gap-4 mb-6">
-        <Card className="bg-gradient-to-r from-primary to-primary-hover text-primary-foreground shadow-hotel">
+        <Card className="bg-gradient-to-r from-blue-600 to-blue-700 text-primary-foreground shadow-hotel">
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
@@ -133,7 +133,7 @@ const ReceptionistDashboard: React.FC = () => {
           </CardContent>
         </Card>
 
-        <Card className="bg-gradient-to-r from-success to-emerald-600 text-success-foreground">
+        <Card className="bg-gradient-to-r from-green-600 to-emerald-600 text-success-foreground">
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
@@ -157,7 +157,7 @@ const ReceptionistDashboard: React.FC = () => {
           </CardContent>
         </Card>
 
-        <Card className="bg-gradient-to-r from-info to-blue-600 text-info-foreground">
+        <Card className="bg-gradient-to-r from-blue-300 to-blue-600 text-info-foreground">
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
@@ -181,7 +181,7 @@ const ReceptionistDashboard: React.FC = () => {
           </CardContent>
         </Card>
 
-        <Card className="bg-gradient-gold text-accent-foreground">
+        <Card className="bg-yellow-500 text-accent-foreground">
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
@@ -330,7 +330,7 @@ const ReceptionistDashboard: React.FC = () => {
                       <p className="text-sm font-medium text-muted-foreground mb-2">Amenities</p>
                       <div className="flex flex-wrap gap-1">
                         {room.amenities.map((amenity, index) => (
-                          <Badge key={index} variant="secondary" className="text-xs">
+                          <Badge key={index} variant="secondary" className="text-xs ">
                             {amenity}
                           </Badge>
                         ))}
