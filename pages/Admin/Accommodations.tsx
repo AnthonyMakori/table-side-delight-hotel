@@ -1,9 +1,11 @@
-import { useState } from "react";
-import { Sidebar } from "@/components/Sidebar"; // ✅ Import Sidebar
+import { useState, useEffect } from "react";
+import axios from "axios";
+import { Sidebar } from "@/components/Sidebar";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Badge } from "@/components/ui/badge";
 import {
   Plus,
   Edit,
@@ -15,67 +17,100 @@ import {
   Search,
   Filter,
 } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
+
+interface Room {
+  id: number;
+  number: string;
+  type: string;
+  capacity: number;
+  price: number;
+  status: string;
+  amenities: string[];
+}
 
 export default function AccommodationsAdmin() {
   const [showAddRoom, setShowAddRoom] = useState(false);
+  const [rooms, setRooms] = useState<Room[]>([]);
+  const [formData, setFormData] = useState({
+    number: "",
+    type: "",
+    capacity: "",
+    price: "",
+    status: "Available",
+    amenities: "",
+  });
 
-  const rooms = [
-    {
-      id: "R001",
-      number: "101",
-      type: "Deluxe Suite",
-      capacity: 2,
-      price: 299,
-      status: "Available",
-      amenities: ["Ocean View", "Balcony", "Mini Bar"],
+  const api = axios.create({
+    baseURL: "http://localhost:8000/api", // Change to your API base URL
+    headers: {
+      Authorization: `Bearer YOUR_ACCESS_TOKEN`, // Replace with real token if needed
     },
-    {
-      id: "R002",
-      number: "205",
-      type: "Standard Room",
-      capacity: 2,
-      price: 149,
-      status: "Occupied",
-      amenities: ["City View", "WiFi"],
-    },
-    {
-      id: "R003",
-      number: "304",
-      type: "Premium Room",
-      capacity: 3,
-      price: 199,
-      status: "Available",
-      amenities: ["Garden View", "Jacuzzi"],
-    },
-  ];
+  });
+
+  const fetchRooms = async () => {
+    try {
+      const res = await api.get("/rooms");
+      setRooms(res.data);
+    } catch (err) {
+      console.error("Error fetching rooms:", err);
+    }
+  };
+
+  useEffect(() => {
+    fetchRooms();
+  }, []);
 
   const getStatusColor = (status: string) => {
     switch (status) {
       case "Available":
-        return "bg-success/20 text-success";
+        return "bg-green-100 text-green-700";
       case "Occupied":
-        return "bg-destructive/20 text-destructive";
+        return "bg-red-100 text-red-700";
       case "Maintenance":
-        return "bg-warning/20 text-warning";
+        return "bg-yellow-100 text-yellow-700";
       default:
-        return "bg-muted/20 text-muted-foreground";
+        return "bg-gray-100 text-gray-600";
+    }
+  };
+
+  const handleAddRoom = async () => {
+    try {
+      const payload = {
+        ...formData,
+        capacity: parseInt(formData.capacity),
+        price: parseFloat(formData.price),
+        amenities: formData.amenities,
+      };
+
+      await api.post("/rooms", payload);
+      setShowAddRoom(false);
+      setFormData({
+        number: "",
+        type: "",
+        capacity: "",
+        price: "",
+        status: "Available",
+        amenities: "",
+      });
+      fetchRooms();
+    } catch (err) {
+      console.error("Error adding room:", err);
     }
   };
 
   return (
     <div className="flex min-h-screen overflow-hidden">
-      {/* Sidebar - locked from scrolling */}
       <div className="w-64 flex-shrink-0 h-full overflow-hidden">
         <Sidebar />
       </div>
 
-      {/* Main content area - scrollable */}
-      <div className=" flex-1 overflow-y-auto p-6 space-y-6 bg-muted">
+      <div className="flex-1 overflow-y-auto p-6 space-y-6 bg-muted">
         <div className="flex justify-between items-center">
           <div>
             <h1 className="text-3xl font-bold">Accommodation Management</h1>
-            <p className="text-muted-foreground">Manage rooms, pricing, and availability</p>
+            <p className="text-muted-foreground">
+              Manage rooms, pricing, and availability
+            </p>
           </div>
           <Button onClick={() => setShowAddRoom(true)} className="flex items-center gap-2">
             <Plus className="h-4 w-4" />
@@ -83,7 +118,6 @@ export default function AccommodationsAdmin() {
           </Button>
         </div>
 
-        {/* Filters and Search */}
         <Card>
           <CardContent className="p-4">
             <div className="flex gap-4 items-center">
@@ -101,7 +135,6 @@ export default function AccommodationsAdmin() {
           </CardContent>
         </Card>
 
-        {/* Rooms Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {rooms.map((room) => (
             <Card key={room.id} className="hover:shadow-lg transition-shadow">
@@ -157,7 +190,6 @@ export default function AccommodationsAdmin() {
           ))}
         </div>
 
-        {/* Add Room Modal/Form */}
         {showAddRoom && (
           <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
             <Card className="w-full max-w-md mx-4">
@@ -168,32 +200,66 @@ export default function AccommodationsAdmin() {
                 <div className="grid grid-cols-2 gap-4">
                   <div>
                     <Label htmlFor="roomNumber">Room Number</Label>
-                    <Input id="roomNumber" placeholder="101" />
+                    <Input
+                      id="roomNumber"
+                      value={formData.number}
+                      onChange={(e) =>
+                        setFormData({ ...formData, number: e.target.value })
+                      }
+                    />
                   </div>
                   <div>
                     <Label htmlFor="roomType">Room Type</Label>
-                    <Input id="roomType" placeholder="Standard Room" />
+                    <Input
+                      id="roomType"
+                      value={formData.type}
+                      onChange={(e) =>
+                        setFormData({ ...formData, type: e.target.value })
+                      }
+                    />
                   </div>
                 </div>
 
                 <div className="grid grid-cols-2 gap-4">
                   <div>
                     <Label htmlFor="capacity">Capacity</Label>
-                    <Input id="capacity" type="number" placeholder="2" />
+                    <Input
+                      id="capacity"
+                      type="number"
+                      value={formData.capacity}
+                      onChange={(e) =>
+                        setFormData({ ...formData, capacity: e.target.value })
+                      }
+                    />
                   </div>
                   <div>
                     <Label htmlFor="price">Price per night</Label>
-                    <Input id="price" type="number" placeholder="149" />
+                    <Input
+                      id="price"
+                      type="number"
+                      value={formData.price}
+                      onChange={(e) =>
+                        setFormData({ ...formData, price: e.target.value })
+                      }
+                    />
                   </div>
                 </div>
 
                 <div>
                   <Label htmlFor="amenities">Amenities (comma separated)</Label>
-                  <Input id="amenities" placeholder="WiFi, TV, Mini Bar" />
+                  <Input
+                    id="amenities"
+                    value={formData.amenities}
+                    onChange={(e) =>
+                      setFormData({ ...formData, amenities: e.target.value })
+                    }
+                  />
                 </div>
 
                 <div className="flex gap-2 pt-4">
-                  <Button className="flex-1">Add Room</Button>
+                  <Button className="flex-1" onClick={handleAddRoom}>
+                    Add Room
+                  </Button>
                   <Button variant="outline" onClick={() => setShowAddRoom(false)}>
                     Cancel
                   </Button>
