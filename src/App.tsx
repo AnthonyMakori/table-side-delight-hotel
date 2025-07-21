@@ -19,6 +19,7 @@ import QRCodes from "../pages/Admin/QRCodes";
 import Orders from "../pages/Admin/Orders";
 import Payments from "../pages/Admin/Payments";
 import Staff from "../pages/Admin/Staff";
+import Departments from "../pages/Admin/Departments";
 import Reports from "../pages/Admin/Reports";
 import { AuthProvider, useAuth } from "@/contexts/AuthContext";
 import { HotelProvider } from "@/contexts/HotelContext";
@@ -62,6 +63,7 @@ const AppContent = () => {
         <Route path="/orders" element={<Orders />} />
         <Route path="/payments" element={<Payments />} />
         <Route path="/staff" element={<Staff />} />
+        <Route path="/departments" element={<Departments />} />
         <Route path="/reports" element={<Reports />} />
         <Route path="/room/:id" element={<RoomDetail />} />
         <Route path="*" element={<NotFound />} />

@@ -22,6 +22,7 @@ const navigation = [
   { name: "Orders", href: "/orders", icon: ClipboardList },
   { name: "Payments", href: "/payments", icon: CreditCard },
   { name: "Staff Management", href: "/staff", icon: Users },
+  { name: "Departments", href: "/departments", icon: Building },
   { name: "Reports", href: "/reports", icon: BarChart3 },
 ];
 
