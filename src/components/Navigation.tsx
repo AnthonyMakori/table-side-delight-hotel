@@ -50,7 +50,7 @@ const Navigation = () => {
             size="sm"
             onClick={() => { window.location.href = "/auth/signin"; }}
           >
-            Login
+            Admin
           </Button2>
         </div>
 
@@ -87,7 +87,7 @@ const Navigation = () => {
                 size="sm"
                 onClick={() => { window.location.href = "/auth/signin"; }}
               >
-                Login
+                Admin
               </Button2>
             </div>
           </SheetContent>

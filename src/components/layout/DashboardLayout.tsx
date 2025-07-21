@@ -3,6 +3,8 @@ import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { useAuth } from '../../contexts/AuthContext';
+import { useNavigate } from "react-router-dom";
+
 import { 
   Hotel, 
   LogOut, 
@@ -28,6 +30,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
   actions 
 }) => {
   const { currentStaff, logout } = useAuth();
+  const navigate = useNavigate();
 
   if (!currentStaff) {
     return null;
@@ -59,6 +62,14 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
     }
   };
 
+    const handleLogout = () => {
+    // Clear user session data (adjust as needed for your auth)
+    localStorage.clear(); // or localStorage.removeItem('token')
+    sessionStorage.clear();
+
+    // Redirect to login page
+    navigate("/auth/LoginForm");
+  };
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}
@@ -117,7 +128,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
             <Button 
               variant="ghost" 
               size="sm" 
-              onClick={logout}
+              onClick={handleLogout}
               className="text-muted-foreground hover:text-destructive"
             >
               <LogOut className="h-4 w-4" />
