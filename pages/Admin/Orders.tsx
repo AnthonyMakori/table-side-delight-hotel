@@ -1,4 +1,4 @@
-import { Sidebar } from "@/components/Sidebar"; // ✅ Sidebar imported
+import { Sidebar } from "@/components/Sidebar";
 import {
   Card,
   CardContent,
