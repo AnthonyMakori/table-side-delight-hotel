@@ -88,7 +88,6 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
           </div>
 
           <div className="flex items-center space-x-4">
-            {/* Current Time */}
             <div className="hidden md:flex items-center space-x-2 text-sm text-muted-foreground">
               <Clock className="h-4 w-4" />
               <span>{new Date().toLocaleTimeString()}</span>

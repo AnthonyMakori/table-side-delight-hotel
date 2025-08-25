@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { Staff, StaffRole } from '../types/hotel';
+import axios from 'axios';
+import { Staff } from '../types/hotel';
 
 interface AuthContextType {
   currentStaff: Staff | null;
@@ -10,36 +11,9 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-// Mock staff data
-const mockStaff: Staff[] = [
-  {
-    id: 'staff-1',
-    name: 'Sarah Johnson',
-    email: 'sarah@grandhotel.com',
-    role: 'receptionist',
-    isActive: true,
-  },
-  {
-    id: 'staff-2',
-    name: 'Marco Rodriguez',
-    email: 'marco@grandhotel.com',
-    role: 'kitchen',
-    isActive: true,
-  },
-  {
-    id: 'staff-3',
-    name: 'Emily Chen',
-    email: 'emily@grandhotel.com',
-    role: 'waiter',
-    isActive: true,
-  },
-];
-
 export const useAuth = () => {
   const context = useContext(AuthContext);
-  if (context === undefined) {
-    throw new Error('useAuth must be used within an AuthProvider');
-  }
+  if (!context) throw new Error('useAuth must be used within an AuthProvider');
   return context;
 };
 
@@ -48,38 +22,41 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    // Check if user is already logged in
-    const savedStaff = localStorage.getItem('currentStaff');
-    if (savedStaff) {
-      setCurrentStaff(JSON.parse(savedStaff));
+    const user = localStorage.getItem('user');
+    if (user) {
+      setCurrentStaff(JSON.parse(user));
     }
     setIsLoading(false);
   }, []);
 
   const login = async (email: string, password: string): Promise<boolean> => {
     setIsLoading(true);
-    
-    // Simulate API call delay
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    
-    // Find staff member by email
-    const staff = mockStaff.find(s => s.email === email && s.isActive);
-    
-    // Simple password check (in real app, this would be secure)
-    if (staff && password === 'hotel123') {
-      setCurrentStaff(staff);
-      localStorage.setItem('currentStaff', JSON.stringify(staff));
-      setIsLoading(false);
+    try {
+      const res = await axios.post('http://127.0.0.1:8000/api/login', {
+        email,
+        password,
+      });
+
+      const { token, user } = res.data;
+
+      // Save to localStorage
+      localStorage.setItem('token', token);
+      localStorage.setItem('user', JSON.stringify(user));
+
+      setCurrentStaff(user);
       return true;
+    } catch (err) {
+      console.error('Login error:', err.response?.data || err.message);
+      return false;
+    } finally {
+      setIsLoading(false);
     }
-    
-    setIsLoading(false);
-    return false;
   };
 
   const logout = () => {
+    localStorage.removeItem('user');
+    localStorage.removeItem('token');
     setCurrentStaff(null);
-    localStorage.removeItem('currentStaff');
   };
 
   return (

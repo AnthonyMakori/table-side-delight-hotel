@@ -1,135 +1,156 @@
 import React, { useState } from 'react';
+import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import { Hotel, Eye, EyeOff, Loader2 } from 'lucide-react';
 import { Button } from '../../src/components/ui/button';
 import { Input } from '../../src/components/ui/input';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../../src/components/ui/card';
-import { Badge } from '../../src/components/ui/badge';
-import { useAuth } from '../../src/contexts/AuthContext';
-import { Hotel, Eye, EyeOff, Loader2 } from 'lucide-react';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '../../src/components/ui/card';
 import { useToast } from '../../src/hooks/use-toast';
 
 const LoginForm: React.FC = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
-  const { login, isLoading, currentStaff } = useAuth();
+  const [loading, setLoading] = useState(false);
   const { toast } = useToast();
   const navigate = useNavigate();
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
+    setLoading(true);
 
-    const success = await login(email, password);
-
-    if (success && currentStaff) {
-      toast({
-        title: 'Welcome back!',
-        description: 'Successfully logged in to the staff dashboard.',
+    try {
+      const { data } = await axios.post('http://127.0.0.1:8000/api/login', {
+        email,
+        password,
       });
 
-      // Redirect based on role
-      switch (currentStaff.role) {
-        case 'receptionist':
+      const { token, user } = data;
+
+      localStorage.setItem('token', token);
+      localStorage.setItem('user', JSON.stringify(user));
+
+      toast({
+        title: 'Login Successful',
+        description: `Welcome back, ${user.name}`,
+      });
+
+      switch (user.role) {
+        case 'Admin':
+          navigate('/Admin/Dashboard');
+          break;
+        case 'Receptionist':
           navigate('/components/dashboards/ReceptionistDashboard');
           break;
-        case 'kitchen':
+        case 'Kitchen':
           navigate('/components/dashboards/KitchenDashboard');
           break;
-        case 'waiter':
+        case 'Waiter':
           navigate('/components/dashboards/WaiterDashboard');
           break;
         default:
           toast({
             title: 'Unknown Role',
-            description: 'No dashboard found for this role.',
+            description: 'No dashboard found for your role.',
             variant: 'destructive',
           });
       }
-    } else {
+    } catch (err: any) {
+      const msg =
+        err.response?.data?.message || 'An error occurred. Try again later.';
       toast({
-        title: 'Login failed',
-        description: 'Invalid email or password. Please try again.',
+        title: 'Login Failed',
+        description: msg,
         variant: 'destructive',
       });
+    } finally {
+      setLoading(false);
     }
   };
 
-  const demoAccounts = [
-    { role: 'Receptionist', email: 'sarah@grandhotel.com', name: 'Sarah Johnson' },
-    { role: 'Kitchen Staff', email: 'marco@grandhotel.com', name: 'Marco Rodriguez' },
-    { role: 'Waiter', email: 'emily@grandhotel.com', name: 'Emily Chen' },
-  ];
-
-  const fillDemo = (email: string) => {
-    setEmail(email);
-    setPassword('hotel123');
-  };
-
   return (
-    <div className="min-h-screen bg-blue-600 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-blue-600 flex items-center justify-center p-6">
       <div className="w-full max-w-md space-y-6">
-        {/* Logo & Header */}
+        {/* Branding */}
         <div className="text-center text-primary-foreground">
           <div className="flex justify-center mb-4">
-            <div className="bg-card rounded-full p-4 shadow-hotel">
-              <Hotel className="h-8 w-8 text-primary" />
+            <div className="bg-card p-4 rounded-full shadow-lg">
+              <Hotel className="w-8 h-8 text-primary" />
             </div>
           </div>
           <h1 className="text-3xl font-bold">Grandeur Hotel</h1>
-          <p className="text-primary-foreground/80">Staff Dashboard</p>
+          <p className="text-sm text-primary-foreground/70">Staff Login Portal</p>
         </div>
 
-        {/* Login Form */}
-        <Card className="shadow-hotel animate-fade-in">
+        {/* Card */}
+        <Card className="animate-fade-in shadow-xl">
           <CardHeader>
-            <CardTitle>Staff Login</CardTitle>
-            <CardDescription>
-              Access your role-specific dashboard
-            </CardDescription>
+            <CardTitle>Sign In</CardTitle>
+            <CardDescription>Access your staff dashboard</CardDescription>
           </CardHeader>
           <CardContent>
-            <form onSubmit={handleSubmit} className="space-y-4">
-              <div className="space-y-2">
-                <label className="text-sm font-medium">Email</label>
+            <form onSubmit={handleLogin} className="space-y-5">
+              {/* Email Field */}
+              <div>
+                <label htmlFor="email" className="block text-sm font-medium mb-1">
+                  Email
+                </label>
                 <Input
+                  id="email"
                   type="email"
-                  placeholder="Enter your email"
+                  placeholder="you@example.com"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   required
-                  className="transition-all duration-200 focus:ring-2 focus:ring-primary"
+                  className="focus:ring-2 focus:ring-primary"
                 />
               </div>
 
-              <div className="space-y-2">
-                <label className="text-sm font-medium">Password</label>
+              {/* Password Field */}
+              <div>
+                <label htmlFor="password" className="block text-sm font-medium mb-1">
+                  Password
+                </label>
                 <div className="relative">
                   <Input
+                    id="password"
                     type={showPassword ? 'text' : 'password'}
-                    placeholder="Enter your password"
+                    placeholder="••••••••"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     required
-                    className="pr-10 transition-all duration-200 focus:ring-2 focus:ring-primary"
+                    className="pr-10 focus:ring-2 focus:ring-primary"
                   />
                   <Button
                     type="button"
                     variant="ghost"
                     size="sm"
-                    className="absolute right-0 top-0 h-full px-3 hover:bg-transparent"
+                    aria-label={showPassword ? 'Hide password' : 'Show password'}
+                    className="absolute top-1/2 -translate-y-1/2 right-2 px-2"
                     onClick={() => setShowPassword(!showPassword)}
                   >
-                    {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                    {showPassword ? (
+                      <EyeOff className="h-4 w-4 text-muted-foreground" />
+                    ) : (
+                      <Eye className="h-4 w-4 text-muted-foreground" />
+                    )}
                   </Button>
                 </div>
               </div>
 
+              {/* Submit Button */}
               <Button
                 type="submit"
-                className="w-full bg-blue-600 transition-all duration-200"
-                disabled={isLoading}
+                className="w-full bg-blue-600 hover:bg-blue-700 transition"
+                disabled={loading}
               >
-                {isLoading ? (
+                {loading ? (
                   <>
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                     Signing in...
@@ -139,33 +160,6 @@ const LoginForm: React.FC = () => {
                 )}
               </Button>
             </form>
-          </CardContent>
-        </Card>
-
-        {/* Demo Accounts */}
-        <Card className="shadow-card-soft animate-fade-in">
-          <CardHeader>
-            <CardTitle className="text-sm font-medium text-muted-foreground">Demo Accounts</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-3">
-            {demoAccounts.map((account, index) => (
-              <div
-                key={index}
-                className="flex items-center justify-between p-3 bg-muted/50 rounded-lg hover:bg-muted transition-colors cursor-pointer"
-                onClick={() => fillDemo(account.email)}
-              >
-                <div>
-                  <div className="font-medium text-sm">{account.name}</div>
-                  <div className="text-xs text-muted-foreground">{account.email}</div>
-                </div>
-                <Badge variant="secondary" className="text-xs">
-                  {account.role}
-                </Badge>
-              </div>
-            ))}
-            <p className="text-xs text-muted-foreground text-center mt-3">
-              Password for all demo accounts: <code className="bg-muted px-1 rounded">hotel123</code>
-            </p>
           </CardContent>
         </Card>
       </div>

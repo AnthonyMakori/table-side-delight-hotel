@@ -93,10 +93,8 @@ export default function Orders() {
 
   return (
     <div className="flex min-h-screen overflow-hidden">
-      {/* Sidebar (locked from scrolling) */}
       <Sidebar />
 
-      {/* Scrollable main content */}
       <div className="flex-1 overflow-y-auto p-6 space-y-6 bg-muted pl-72">
         <div>
           <h1 className="text-3xl font-bold">Order Management</h1>
