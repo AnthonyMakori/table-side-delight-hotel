@@ -1,20 +1,34 @@
-import { Button } from '../../src/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '../../src/components/ui/card';
-import { RadioGroup, RadioGroupItem } from '../../src/components/ui/radio-group';
-import { Label } from '../../src/components/ui/label';
-import { Separator } from '../../src/components/ui/separator';
-import { Badge } from '../../src/components/ui/badge';
-import { ArrowLeft, Minus, Plus, Trash2, CreditCard, Truck, UtensilsCrossed } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
-import { useCart } from '../../src/contexts/CartContext';
-import { useState } from 'react';
-import { useToast } from '@/hooks/use-toast';
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Label } from "@/components/ui/label";
+import { Separator } from "@/components/ui/separator";
+import { Badge } from "@/components/ui/badge";
+import {
+  ArrowLeft,
+  Minus,
+  Plus,
+  Trash2,
+  CreditCard,
+  Truck,
+  UtensilsCrossed,
+} from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import { useCart } from "@/contexts/CartContext";
+import { useState } from "react";
+import { useToast } from "@/hooks/use-toast";
 
 const Cart = () => {
   const { state, updateQuantity, removeItem, clearCart } = useCart();
-  const [paymentMethod, setPaymentMethod] = useState('online');
+  const [paymentMethod, setPaymentMethod] = useState("online");
   const navigate = useNavigate();
   const { toast } = useToast();
+
+  const formatCurrency = (amount: number) =>
+    new Intl.NumberFormat("en-US", {
+      style: "currency",
+      currency: "USD",
+    }).format(amount);
 
   const handleQuantityChange = (id: string, newQuantity: number) => {
     if (newQuantity <= 0) {
@@ -28,33 +42,38 @@ const Cart = () => {
     if (state.items.length === 0) {
       toast({
         title: "Cart is empty",
-        description: "Please add some items to your cart before placing an order.",
+        description: "Please add some items before placing an order.",
         variant: "destructive",
       });
       return;
     }
 
     toast({
-      title: "Order placed successfully!",
-      description: `Your order totaling $${state.total.toFixed(2)} has been placed. Payment method: ${paymentMethod}`,
+      title: "Order placed 🎉",
+      description: `Your order totaling ${formatCurrency(
+        state.total
+      )} has been placed. Payment method: ${paymentMethod}`,
     });
 
-    // Clear cart and navigate back to menu
     clearCart();
-    navigate('/');
+    navigate("/");
   };
 
   if (state.items.length === 0) {
     return (
       <div className="min-h-screen bg-gradient-food flex items-center justify-center">
         <div className="max-w-md mx-auto text-center px-4">
-          <div className="bg-white rounded-lg shadow-food p-8">
+          <div className="bg-white rounded-xl shadow-lg p-8">
             <UtensilsCrossed className="w-16 h-16 mx-auto text-muted-foreground mb-4" />
-            <h2 className="text-2xl font-bold text-foreground mb-4">Your cart is empty</h2>
+            <h2 className="text-2xl font-bold mb-2">Your cart is empty</h2>
             <p className="text-muted-foreground mb-6">
-              Looks like you haven't added any delicious items to your cart yet.
+              Looks like you haven't added anything delicious yet.
             </p>
-            <Button onClick={() => navigate(-1)} variant="default" className="w-full">
+            <Button
+              onClick={() => navigate(-1)}
+              variant="default"
+              className="w-full"
+            >
               <ArrowLeft className="w-4 h-4 mr-2" />
               Browse Menu
             </Button>
@@ -67,26 +86,21 @@ const Cart = () => {
   return (
     <div className="min-h-screen bg-gradient-food">
       {/* Header */}
-      <header className="bg-white/80 backdrop-blur-md border-b border-border/50">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+      <header className="bg-white/80 backdrop-blur-md border-b">
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center h-16">
-            <Button
-              onClick={() => navigate(-1)}
-              variant="ghost"
-              size="sm"
-              className="mr-4"
-            >
+            <Button onClick={() => navigate(-1)} variant="ghost" size="sm">
               <ArrowLeft className="w-4 h-4 mr-2" />
-              Back to Menu
+              Back
             </Button>
-            <h1 className="text-2xl font-bold text-foreground">Your Cart</h1>
+            <h1 className="ml-4 text-2xl font-bold">Your Cart</h1>
           </div>
         </div>
       </header>
 
-      <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <main className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Cart Items */}
+          {/* Items */}
           <div className="lg:col-span-2 space-y-4">
             <Card>
               <CardHeader>
@@ -97,20 +111,38 @@ const Cart = () => {
               </CardHeader>
               <CardContent className="space-y-4">
                 {state.items.map((item) => (
-                  <div key={item.id} className="flex items-center space-x-4 p-4 border border-border rounded-lg">
-                    <img
-                      src={item.image}
-                      alt={item.name}
-                      className="w-16 h-16 object-cover rounded-md"
-                    />
-                    <div className="flex-1 min-w-0">
-                      <h3 className="font-semibold text-foreground truncate">{item.name}</h3>
-                      <p className="text-sm text-muted-foreground truncate">{item.description}</p>
-                      <p className="text-lg font-bold text-primary">${item.price.toFixed(2)}</p>
+                  <div
+                    key={item.id}
+                    className="flex items-center gap-4 p-4 border rounded-xl hover:shadow-md transition"
+                  >
+                    {/* Image from DB */}
+                    <div className="w-20 h-20 bg-muted rounded-lg overflow-hidden flex items-center justify-center">
+                      {item.image ? (
+                        <img
+                          src={item.image}
+                          alt={item.name}
+                          className="w-full h-full object-cover"
+                        />
+                      ) : (
+                        <span className="text-xs text-muted-foreground">No Image</span>
+                      )}
                     </div>
-                    <div className="flex items-center space-x-2">
+
+                    {/* Item Info */}
+                    <div className="flex-1 min-w-0">
+                      <h3 className="font-semibold truncate">{item.name}</h3>
+                      <p className="text-sm text-muted-foreground truncate">
+                        {item.description}
+                      </p>
+                      <p className="text-lg font-bold text-primary">
+                        {formatCurrency(item.price)}
+                      </p>
+                    </div>
+
+                    {/* Quantity & Actions */}
+                    <div className="flex items-center gap-2">
                       <Button
-                        size="sm"
+                        size="icon"
                         variant="outline"
                         onClick={() => handleQuantityChange(item.id, item.quantity - 1)}
                       >
@@ -118,14 +150,14 @@ const Cart = () => {
                       </Button>
                       <span className="w-8 text-center font-medium">{item.quantity}</span>
                       <Button
-                        size="sm"
+                        size="icon"
                         variant="outline"
                         onClick={() => handleQuantityChange(item.id, item.quantity + 1)}
                       >
                         <Plus className="w-3 h-3" />
                       </Button>
                       <Button
-                        size="sm"
+                        size="icon"
                         variant="destructive"
                         onClick={() => removeItem(item.id)}
                       >
@@ -135,11 +167,12 @@ const Cart = () => {
                   </div>
                 ))}
               </CardContent>
+
             </Card>
           </div>
 
-          {/* Order Summary */}
-          <div className="space-y-6">
+          {/* Summary */}
+          <div className="space-y-6 lg:sticky lg:top-20 h-fit">
             <Card>
               <CardHeader>
                 <CardTitle>Order Summary</CardTitle>
@@ -148,15 +181,21 @@ const Cart = () => {
                 <div className="space-y-2">
                   {state.items.map((item) => (
                     <div key={item.id} className="flex justify-between text-sm">
-                      <span>{item.name} × {item.quantity}</span>
-                      <span>${(item.price * item.quantity).toFixed(2)}</span>
+                      <span>
+                        {item.name} × {item.quantity}
+                      </span>
+                      <span>
+                        {formatCurrency(item.price * item.quantity)}
+                      </span>
                     </div>
                   ))}
                 </div>
                 <Separator />
                 <div className="flex justify-between font-bold text-lg">
                   <span>Total</span>
-                  <span className="text-primary">${state.total.toFixed(2)}</span>
+                  <span className="text-primary">
+                    {formatCurrency(state.total)}
+                  </span>
                 </div>
               </CardContent>
             </Card>
@@ -166,39 +205,57 @@ const Cart = () => {
                 <CardTitle>Payment Method</CardTitle>
               </CardHeader>
               <CardContent>
-                <RadioGroup value={paymentMethod} onValueChange={setPaymentMethod}>
-                  <div className="flex items-center space-x-2">
-                    <RadioGroupItem value="online" id="online" />
-                    <Label htmlFor="online" className="flex items-center cursor-pointer">
-                      <CreditCard className="w-4 h-4 mr-2" />
-                      Pay Now (Online)
-                    </Label>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <RadioGroupItem value="delivery" id="delivery" />
-                    <Label htmlFor="delivery" className="flex items-center cursor-pointer">
-                      <Truck className="w-4 h-4 mr-2" />
-                      Pay on Delivery
-                    </Label>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <RadioGroupItem value="after" id="after" />
-                    <Label htmlFor="after" className="flex items-center cursor-pointer">
-                      <UtensilsCrossed className="w-4 h-4 mr-2" />
-                      Pay After Meal
-                    </Label>
-                  </div>
+                <RadioGroup
+                  value={paymentMethod}
+                  onValueChange={setPaymentMethod}
+                  className="space-y-3"
+                >
+                  {[
+                    {
+                      value: "online",
+                      label: "Pay Now (Online)",
+                      icon: CreditCard,
+                    },
+                    {
+                      value: "delivery",
+                      label: "Pay on Delivery",
+                      icon: Truck,
+                    },
+                    {
+                      value: "after",
+                      label: "Pay After Meal",
+                      icon: UtensilsCrossed,
+                    },
+                  ].map(({ value, label, icon: Icon }) => (
+                    <div
+                      key={value}
+                      className={`flex items-center gap-2 p-2 rounded-md border cursor-pointer transition ${
+                        paymentMethod === value
+                          ? "border-primary bg-primary/5"
+                          : "border-transparent hover:bg-muted"
+                      }`}
+                      onClick={() => setPaymentMethod(value)}
+                    >
+                      <RadioGroupItem value={value} id={value} />
+                      <Label
+                        htmlFor={value}
+                        className="flex items-center cursor-pointer"
+                      >
+                        <Icon className="w-4 h-4 mr-2" />
+                        {label}
+                      </Label>
+                    </div>
+                  ))}
                 </RadioGroup>
               </CardContent>
             </Card>
 
             <Button
               onClick={handlePlaceOrder}
-              variant="default"
               size="lg"
-              className="w-full bg-blue-600 hover:bg-green-600 text-white"
+              className="w-full bg-blue-600 hover:bg-blue-700 text-white rounded-xl shadow-md"
             >
-              Place Order - ${state.total.toFixed(2)}
+              Place Order – {formatCurrency(state.total)}
             </Button>
           </div>
         </div>

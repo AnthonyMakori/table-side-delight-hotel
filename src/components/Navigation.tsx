@@ -43,15 +43,8 @@ const Navigation = () => {
               variant="outline"
               size="sm" 
               onClick={() => { window.location.href = "/auth/LoginForm"; }}>
-                Staff
+                Login
               </Button>
-          <Button2
-            variant="outline"
-            size="sm"
-            onClick={() => { window.location.href = "/auth/signin"; }}
-          >
-            Admin
-          </Button2>
         </div>
 
         {/* Mobile Menu */}
