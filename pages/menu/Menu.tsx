@@ -1,17 +1,47 @@
-import { useState } from 'react';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '../../src/components/ui/tabs';
-import { Badge } from '../../src/components/ui/badge';
-import { Button } from '../../src/components/ui/button';
-import { ShoppingCart } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
-import { menuData, categories } from '../../src/data/menuData';
-import { MenuCard } from '../../src/components/MenuCard';
-import { useCart } from '../../src/contexts/CartContext';
+// src/pages/Menu.tsx
+import { useState, useEffect } from "react";
+import axios from "axios";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "../../src/components/ui/tabs";
+import { Badge } from "../../src/components/ui/badge";
+import { Button } from "../../src/components/ui/button";
+import { ShoppingCart } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import { MenuCard } from "../../src/components/MenuCard";
+import { useCart } from "../../src/contexts/CartContext";
+
+const API_BASE = "http://localhost:8000/api"; // same as admin panel
 
 const Menu = () => {
-  const [activeCategory, setActiveCategory] = useState('starters');
+  const [activeCategory, setActiveCategory] = useState("all");
+  const [menuItems, setMenuItems] = useState<any[]>([]);
+  const [categories, setCategories] = useState<string[]>([
+    "All",
+    "Breakfast",
+    "Lunch",
+    "Dinner",
+    "Drinks",
+    "Desserts",
+  ]);
   const { itemCount } = useCart();
   const navigate = useNavigate();
+
+  // Fetch meals
+  const fetchMenuItems = async () => {
+    try {
+      const response = await axios.get(`${API_BASE}/menu-items`, {
+        params: {
+          category: activeCategory !== "all" ? activeCategory : undefined,
+        },
+      });
+      setMenuItems(response.data);
+    } catch (err) {
+      console.error("Failed to fetch menu items", err);
+    }
+  };
+
+  useEffect(() => {
+    fetchMenuItems();
+  }, [activeCategory]);
 
   return (
     <div className="min-h-screen bg-gradient-food">
@@ -24,7 +54,7 @@ const Menu = () => {
               <span className="ml-2 text-sm text-muted-foreground">Restaurant</span>
             </div>
             <Button
-              onClick={() => navigate('/cart')}
+              onClick={() => navigate("/cart")}
               variant="default"
               className="relative bg-blue-600 hover:bg-blue-800 text-white flex items-center"
             >
@@ -55,25 +85,24 @@ const Menu = () => {
 
         {/* Category Tabs */}
         <Tabs value={activeCategory} onValueChange={setActiveCategory} className="w-full">
-          <TabsList className="grid w-full grid-cols-4 mb-8 bg-white/60 backdrop-blur-sm">
-            {categories.map((category) => (
+          <TabsList className="grid w-full grid-cols-3 md:grid-cols-6 mb-8 bg-white/60 backdrop-blur-sm">
+            {categories.map((cat) => (
               <TabsTrigger
-                key={category.id}
-                value={category.id}
+                key={cat}
+                value={cat.toLowerCase()}
                 className="flex items-center gap-2 text-sm font-medium data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
               >
-                <span className="text-lg">{category.icon}</span>
-                {category.name}
+                {cat}
               </TabsTrigger>
             ))}
           </TabsList>
 
           {/* Menu Items Grid */}
-          {categories.map((category) => (
-            <TabsContent key={category.id} value={category.id}>
+          {categories.map((cat) => (
+            <TabsContent key={cat} value={cat.toLowerCase()}>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                {menuData
-                  .filter((item) => item.category === category.id)
+                {menuItems
+                  .filter((item) => cat === "All" || item.category.toLowerCase() === cat.toLowerCase())
                   .map((item) => (
                     <MenuCard key={item.id} item={item} />
                   ))}

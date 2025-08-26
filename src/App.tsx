@@ -27,6 +27,8 @@ import LoginForm from "../pages/auth/LoginForm";
 import ReceptionistDashboard from "@/components/dashboards/ReceptionistDashboard";
 import KitchenDashboard from "@/components/dashboards/KitchenDashboard";
 import WaiterDashboard from "@/components/dashboards/WaiterDashboard";
+import ForgotPassword from "../pages/auth/forgotPassword";
+import ResetPassword from "../pages/auth/ResetPassword";
 
 const queryClient = new QueryClient();
 
@@ -58,6 +60,8 @@ const AppContent = () => {
         <Route path="/components/dashboards/WaiterDashboard" element={<WaiterDashboard />} />
         <Route path="/Admin/Dashboard" element={<Dashboard />} />
         <Route path="/accommodations" element={<AccommodationsAdmin />} />
+        <Route path="/forgot-password" element={<ForgotPassword />} />
+        <Route path="/reset-password/:token" element={<ResetPassword />} />
         <Route path="/meals" element={<Meals />} />
         <Route path="/qr-codes" element={<QRCodes />} />
         <Route path="/orders" element={<Orders />} />

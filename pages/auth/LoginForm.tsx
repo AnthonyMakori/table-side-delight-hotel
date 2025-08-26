@@ -1,21 +1,21 @@
-import React, { useState } from 'react';
-import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
-import { Hotel, Eye, EyeOff, Loader2 } from 'lucide-react';
-import { Button } from '../../src/components/ui/button';
-import { Input } from '../../src/components/ui/input';
+import React, { useState } from "react";
+import axios from "axios";
+import { useNavigate, Link } from "react-router-dom";
+import { Hotel, Eye, EyeOff, Loader2 } from "lucide-react";
+import { Button } from "../../src/components/ui/button";
+import { Input } from "../../src/components/ui/input";
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from '../../src/components/ui/card';
-import { useToast } from '../../src/hooks/use-toast';
+} from "../../src/components/ui/card";
+import { useToast } from "../../src/hooks/use-toast";
 
 const LoginForm: React.FC = () => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const { toast } = useToast();
@@ -26,48 +26,48 @@ const LoginForm: React.FC = () => {
     setLoading(true);
 
     try {
-      const { data } = await axios.post('http://127.0.0.1:8000/api/login', {
+      const { data } = await axios.post("http://127.0.0.1:8000/api/login", {
         email,
         password,
       });
 
       const { token, user } = data;
 
-      localStorage.setItem('token', token);
-      localStorage.setItem('user', JSON.stringify(user));
+      localStorage.setItem("token", token);
+      localStorage.setItem("user", JSON.stringify(user));
 
       toast({
-        title: 'Login Successful',
+        title: "Login Successful",
         description: `Welcome back, ${user.name}`,
       });
 
       switch (user.role) {
-        case 'Admin':
-          navigate('/Admin/Dashboard');
+        case "Admin":
+          navigate("/Admin/Dashboard");
           break;
-        case 'Receptionist':
-          navigate('/components/dashboards/ReceptionistDashboard');
+        case "Receptionist":
+          navigate("/components/dashboards/ReceptionistDashboard");
           break;
-        case 'Kitchen':
-          navigate('/components/dashboards/KitchenDashboard');
+        case "Kitchen":
+          navigate("/components/dashboards/KitchenDashboard");
           break;
-        case 'Waiter':
-          navigate('/components/dashboards/WaiterDashboard');
+        case "Waiter":
+          navigate("/components/dashboards/WaiterDashboard");
           break;
         default:
           toast({
-            title: 'Unknown Role',
-            description: 'No dashboard found for your role.',
-            variant: 'destructive',
+            title: "Unknown Role",
+            description: "No dashboard found for your role.",
+            variant: "destructive",
           });
       }
     } catch (err: any) {
       const msg =
-        err.response?.data?.message || 'An error occurred. Try again later.';
+        err.response?.data?.message || "Invalid email or password. Try again.";
       toast({
-        title: 'Login Failed',
+        title: "Login Failed",
         description: msg,
-        variant: 'destructive',
+        variant: "destructive",
       });
     } finally {
       setLoading(false);
@@ -85,7 +85,9 @@ const LoginForm: React.FC = () => {
             </div>
           </div>
           <h1 className="text-3xl font-bold">Grandeur Hotel</h1>
-          <p className="text-sm text-primary-foreground/70">Staff Login Portal</p>
+          <p className="text-sm text-primary-foreground/70">
+            Staff Login Portal
+          </p>
         </div>
 
         {/* Card */}
@@ -98,7 +100,10 @@ const LoginForm: React.FC = () => {
             <form onSubmit={handleLogin} className="space-y-5">
               {/* Email Field */}
               <div>
-                <label htmlFor="email" className="block text-sm font-medium mb-1">
+                <label
+                  htmlFor="email"
+                  className="block text-sm font-medium mb-1"
+                >
                   Email
                 </label>
                 <Input
@@ -114,13 +119,16 @@ const LoginForm: React.FC = () => {
 
               {/* Password Field */}
               <div>
-                <label htmlFor="password" className="block text-sm font-medium mb-1">
+                <label
+                  htmlFor="password"
+                  className="block text-sm font-medium mb-1"
+                >
                   Password
                 </label>
                 <div className="relative">
                   <Input
                     id="password"
-                    type={showPassword ? 'text' : 'password'}
+                    type={showPassword ? "text" : "password"}
                     placeholder="••••••••"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
@@ -131,7 +139,7 @@ const LoginForm: React.FC = () => {
                     type="button"
                     variant="ghost"
                     size="sm"
-                    aria-label={showPassword ? 'Hide password' : 'Show password'}
+                    aria-label={showPassword ? "Hide password" : "Show password"}
                     className="absolute top-1/2 -translate-y-1/2 right-2 px-2"
                     onClick={() => setShowPassword(!showPassword)}
                   >
@@ -141,6 +149,14 @@ const LoginForm: React.FC = () => {
                       <Eye className="h-4 w-4 text-muted-foreground" />
                     )}
                   </Button>
+                </div>
+                <div className="text-right mt-1">
+                  <Link
+                    to="/forgot-password"
+                    className="text-sm text-blue-600 hover:underline"
+                  >
+                    Forgot Password?
+                  </Link>
                 </div>
               </div>
 
@@ -156,7 +172,7 @@ const LoginForm: React.FC = () => {
                     Signing in...
                   </>
                 ) : (
-                  'Sign In'
+                  "Sign In"
                 )}
               </Button>
             </form>
