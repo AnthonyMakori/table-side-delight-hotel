@@ -34,6 +34,7 @@ export default function Staff() {
   const [departmentId, setDepartmentId] = useState("");
   const [hireDate, setHireDate] = useState("");
   const [permissions, setPermissions] = useState<string[]>([]);
+  const [staffStats, setStaffStats] = useState({ total: 0, active: 0 });
 
   const allPermissions = [
     "Bookings", "Check-in/out", "Customer Service",
@@ -68,24 +69,29 @@ export default function Staff() {
   };
 
   // fetch departments and staff
-  useEffect(() => {
-    fetch("http://localhost:8000/api/departments")
-      .then(r => r.json())
-      .then(setDepartments);
-    fetch("http://localhost:8000/api/staff")
-      .then(r => r.json())
-      .then(data => setStaff(data.map(sp => ({
-        id: sp.user.id,
-        name: sp.user.name,
-        role: sp.user.role,
-        department: sp.department.name,
-        email: sp.user.email,
-        phone: sp.user.phone,
-        hireDate: sp.hire_date,
-        status: sp.user.deleted_at ? "Inactive" : (sp.on_leave ? "On Leave" : "Active"),
-        permissions: sp.permissions
-      }))));
-  }, []);
+ useEffect(() => {
+  fetch("http://localhost:8000/api/departments")
+    .then(r => r.json())
+    .then(setDepartments);
+
+  fetch("http://localhost:8000/api/staff")
+    .then(r => r.json())
+    .then(data => setStaff(data.map(sp => ({
+      id: sp.user.id,
+      name: sp.user.name,
+      role: sp.user.role,
+      department: sp.department.name,
+      email: sp.user.email,
+      phone: sp.user.phone,
+      hireDate: sp.hire_date,
+      status: sp.user.deleted_at ? "Inactive" : (sp.on_leave ? "On Leave" : "Active"),
+      permissions: sp.permissions
+    }))));
+
+  fetch("http://localhost:8000/api/staff/stats")
+    .then(res => res.json())
+    .then(setStaffStats);
+}, []);
 
   const handleAddStaff = async () => {
     const payload = {
@@ -150,14 +156,17 @@ export default function Staff() {
           <Card><CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div><p className="text-sm font-medium text-muted-foreground">Total Staff</p>
-                <p className="text-2xl font-bold">{staff.length}</p></div><Users className="h-8 w-8 text-muted-foreground"/>
+                <p className="text-2xl font-bold">{staffStats.total}</p>
+              </div>
+              <Users className="h-8 w-8 text-muted-foreground"/>
             </div>
           </CardContent></Card>
 
           <Card><CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div><p className="text-sm font-medium text-muted-foreground">Active Staff</p>
-                <p className="text-2xl font-bold">{staff.filter(s => s.status === "Active").length}</p></div>
+                <p className="text-2xl font-bold">{staffStats.active}</p>
+              </div>
               <Badge className="bg-success/20 text-success">Active</Badge>
             </div>
           </CardContent></Card>
