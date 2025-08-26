@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { ArrowLeft, Star, MapPin, Square, Calendar, Wifi, Car, Coffee, Tv, Wind, Shield, Users } from 'lucide-react';
-import { mockRooms } from '../../src/data/rooms';
+// import { mockRooms } from '../../src/data/rooms';
 import { Button3 } from '../../src/components/ui/button3';
 import { Badge } from '../../src/components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from '../../src/components/ui/card';

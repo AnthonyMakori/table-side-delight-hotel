@@ -26,6 +26,7 @@ interface Room {
   price: number;
   status: string;
   amenities: string[];
+  image?: string; 
 }
 
 export default function AccommodationsAdmin() {
@@ -38,12 +39,13 @@ export default function AccommodationsAdmin() {
     price: "",
     status: "Available",
     amenities: "",
+    image: null as File | null, 
   });
 
   const api = axios.create({
-    baseURL: "http://localhost:8000/api", // Change to your API base URL
+    baseURL: "http://localhost:8000/api", 
     headers: {
-      Authorization: `Bearer YOUR_ACCESS_TOKEN`, // Replace with real token if needed
+      Authorization: `Bearer YOUR_ACCESS_TOKEN`, 
     },
   });
 
@@ -75,14 +77,24 @@ export default function AccommodationsAdmin() {
 
   const handleAddRoom = async () => {
     try {
-      const payload = {
-        ...formData,
-        capacity: parseInt(formData.capacity),
-        price: parseFloat(formData.price),
-        amenities: formData.amenities,
-      };
+      const payload = new FormData();
+      payload.append("number", formData.number);
+      payload.append("type", formData.type);
+      payload.append("capacity", formData.capacity);
+      payload.append("price", formData.price);
+      payload.append("status", formData.status);
+      payload.append("amenities", formData.amenities);
 
-      await api.post("/rooms", payload);
+      if (formData.image) {
+        payload.append("image", formData.image);
+      }
+
+      await api.post("/rooms", payload, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+
       setShowAddRoom(false);
       setFormData({
         number: "",
@@ -91,6 +103,7 @@ export default function AccommodationsAdmin() {
         price: "",
         status: "Available",
         amenities: "",
+        image: null,
       });
       fetchRooms();
     } catch (err) {
@@ -112,7 +125,10 @@ export default function AccommodationsAdmin() {
               Manage rooms, pricing, and availability
             </p>
           </div>
-          <Button onClick={() => setShowAddRoom(true)} className="flex items-center gap-2">
+          <Button
+            onClick={() => setShowAddRoom(true)}
+            className="flex items-center gap-2"
+          >
             <Plus className="h-4 w-4" />
             Add Room
           </Button>
@@ -138,6 +154,11 @@ export default function AccommodationsAdmin() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {rooms.map((room) => (
             <Card key={room.id} className="hover:shadow-lg transition-shadow">
+              {room.image && (
+                <img src={room.image ?? "/default-room.jpg"} alt={room.type} />
+
+              )}
+
               <CardHeader>
                 <div className="flex justify-between items-start">
                   <div>
@@ -147,7 +168,9 @@ export default function AccommodationsAdmin() {
                     </CardTitle>
                     <p className="text-sm text-muted-foreground">{room.type}</p>
                   </div>
-                  <Badge className={getStatusColor(room.status)}>{room.status}</Badge>
+                  <Badge className={getStatusColor(room.status)}>
+                    {room.status}
+                  </Badge>
                 </div>
               </CardHeader>
               <CardContent className="space-y-4">
@@ -256,11 +279,29 @@ export default function AccommodationsAdmin() {
                   />
                 </div>
 
+                <div>
+                  <Label htmlFor="image">Room Image</Label>
+                  <Input
+                    id="image"
+                    type="file"
+                    accept="image/*"
+                    onChange={(e) =>
+                      setFormData({
+                        ...formData,
+                        image: e.target.files ? e.target.files[0] : null,
+                      })
+                    }
+                  />
+                </div>
+
                 <div className="flex gap-2 pt-4">
                   <Button className="flex-1" onClick={handleAddRoom}>
                     Add Room
                   </Button>
-                  <Button variant="outline" onClick={() => setShowAddRoom(false)}>
+                  <Button
+                    variant="outline"
+                    onClick={() => setShowAddRoom(false)}
+                  >
                     Cancel
                   </Button>
                 </div>
