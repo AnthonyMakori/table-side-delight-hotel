@@ -93,47 +93,88 @@ export default function Staff() {
     .then(setStaffStats);
 }, []);
 
-  const handleAddStaff = async () => {
-    const payload = {
-  name: `${firstName} ${lastName}`,
-  email,
-  phone,
-  role,
-  password,
-  department_id: parseInt(departmentId),
-  hire_date: hireDate,
-  permissions
+const handleAddStaff = async () => {
+  // Ensure department is selected
+  if (!departmentId) {
+    alert("Please select a department");
+    return;
+  }
+
+  // Build payload
+  const payload = {
+    name: `${firstName} ${lastName}`,
+    email,
+    phone,
+    role,
+    password,
+    department_id: parseInt(departmentId),
+    hire_date: hireDate,
+    permissions
+  };
+
+  console.log("Payload:", payload);
+
+  // Optimistic UI update (optional)
+  const tempId = Date.now(); // temporary ID
+  const newStaffTemp = {
+    id: tempId,
+    name: payload.name,
+    role: payload.role,
+    department: departments.find(d => d.id === payload.department_id)?.name || "",
+    email: payload.email,
+    phone: payload.phone,
+    hireDate: payload.hire_date,
+    status: "Active",
+    permissions: payload.permissions
+  };
+
+  setStaff(prev => [...prev, newStaffTemp]);
+  setShowAddStaff(false);
+
+  // Reset form
+  setFirstName(""); setLastName(""); setEmail("");
+  setPhone(""); setRole(""); setPassword("");
+  setDepartmentId(""); setHireDate(""); setPermissions([]);
+
+  try {
+    const res = await fetch("http://localhost:8000/api/staff", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload)
+    });
+
+    if (!res.ok) {
+      throw new Error(`Failed to add staff: ${res.status}`);
+    }
+
+    const data = await res.json();
+    console.log("Server Response:", data);
+
+    // Replace temporary staff with real data from server
+    setStaff(prev =>
+      prev.map(s => s.id === tempId ? {
+        id: data.user?.id || data.id,
+        name: data.user?.name || data.name,
+        role: data.user?.role || data.role,
+        department: departments.find(d => d.id === (data.profile?.department_id || data.department_id))?.name || "",
+        email: data.user?.email || data.email,
+        phone: data.user?.phone || data.phone,
+        hireDate: data.profile?.hire_date || data.hire_date,
+        status: "Active",
+        permissions: data.profile?.permissions || data.permissions || []
+      } : s)
+    );
+
+    alert("Staff member added successfully!");
+
+  } catch (err) {
+    console.error(err);
+    alert("Failed to add staff. Please try again.");
+
+    setStaff(prev => prev.filter(s => s.id !== tempId));
+  }
 };
 
-
-    try {
-      const res = await fetch("http://localhost:8000/api/staff", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload)
-      });
-      const data = await res.json();
-      setStaff(prev => [...prev, {
-        id: data.user.id,
-        name: data.user.name,
-        role: data.user.role,
-        department: departments.find(d => d.id === data.profile.department_id)?.name || "",
-        email: data.user.email,
-        phone: data.user.phone,
-        hireDate: data.profile.hire_date,
-        status: "Active",
-        permissions: data.profile.permissions
-      }]);
-      setShowAddStaff(false);
-
-      // reset form
-      setFirstName(""); setLastName(""); setEmail("");
-      setPhone(""); setRole(""); setPassword("");
-      setDepartmentId(""); setHireDate(""); setPermissions([]);
-    } catch (err) {
-      console.error(err);
-    }
-  };
 
   return (
     <div className="flex min-h-screen overflow-hidden">

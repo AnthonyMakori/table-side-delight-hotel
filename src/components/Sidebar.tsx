@@ -31,12 +31,10 @@ export function Sidebar() {
 
 
   const handleLogout = () => {
-    // Clear user session data (adjust as needed for your auth)
-    localStorage.clear(); // or localStorage.removeItem('token')
+    localStorage.clear(); 
     sessionStorage.clear();
 
-    // Redirect to login page
-    navigate("/auth/signin");
+    navigate("/auth/LoginForm");
   };
   return (
     <div className="fixed top-0 left-0 h-screen w-64 bg-blue-600 text-white flex flex-col justify-between z-50">
