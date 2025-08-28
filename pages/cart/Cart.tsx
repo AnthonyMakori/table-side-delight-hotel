@@ -77,7 +77,7 @@ const Cart = () => {
     });
 
     clearCart();
-    navigate("/menu"); 
+    navigate("/cart/OrderTracking"); 
 
   } catch (error: any) {
     console.error(error);
