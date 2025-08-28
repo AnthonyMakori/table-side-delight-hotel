@@ -1,6 +1,4 @@
-import { NavLink } from "react-router-dom";
-import { useNavigate } from "react-router-dom";
-
+import { NavLink, useNavigate } from "react-router-dom";
 import {
   LayoutDashboard,
   Building,
@@ -13,6 +11,10 @@ import {
   Hotel,
   LogOut
 } from "lucide-react";
+
+interface SidebarProps {
+  className?: string; 
+}
 
 const navigation = [
   { name: "Dashboard", href: "/Admin/Dashboard", icon: LayoutDashboard },
@@ -27,19 +29,17 @@ const navigation = [
   { name: "Reports", href: "/reports", icon: BarChart3 },
 ];
 
-
-export function Sidebar() {
-    const navigate = useNavigate();
-
+export function Sidebar({ className = "" }: SidebarProps) {
+  const navigate = useNavigate();
 
   const handleLogout = () => {
-    localStorage.clear(); 
+    localStorage.clear();
     sessionStorage.clear();
-
     navigate("/auth/LoginForm");
   };
+
   return (
-    <div className="fixed top-0 left-0 h-screen w-64 bg-blue-600 text-white flex flex-col justify-between z-50">
+    <div className={`fixed top-0 left-0 h-screen w-64 bg-blue-600 text-white flex flex-col justify-between z-50 ${className}`}>
       {/* Top Section */}
       <div>
         <div className="p-6 border-b border-primary-foreground/20">
@@ -77,7 +77,7 @@ export function Sidebar() {
       </div>
 
       {/* Bottom Logout Button */}
-       <div className="p-4 border-t border-primary-foreground/20">
+      <div className="p-4 border-t border-primary-foreground/20">
         <button
           onClick={handleLogout}
           className="flex items-center gap-3 px-4 py-3 rounded-lg text-primary-foreground/80 hover:bg-primary-foreground/10 hover:text-primary-foreground transition-colors duration-200 w-full"
