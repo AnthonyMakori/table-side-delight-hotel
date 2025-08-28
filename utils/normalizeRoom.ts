@@ -7,7 +7,6 @@ export function normalizeRoom(api: ApiRoom): Room {
 
   const features = (api.amenities || []).map(a => (a ?? '').trim()).filter(Boolean);
 
-  // ✅ Fix image handling
   const imageUrl = api.image
     ? api.image.startsWith('http')
       ? api.image
@@ -22,8 +21,8 @@ export function normalizeRoom(api: ApiRoom): Room {
     shortDescription: `${api.type ?? 'Room'} for ${api.capacity ?? 0} guest(s)`,
     condition: 'Standard', 
     status: (api.status as Room['status']) || 'Available',
-    thumbnail: imageUrl,   // ✅ now carries correct image
-    images: [imageUrl],    // ✅ so gallery can use it too
+    thumbnail: imageUrl,   
+    images: [imageUrl],    
     price: {
       night,
       week: Math.round(night * 7),

@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import { StatCard } from "../../src/components/StatCard";
 import { Card, CardContent, CardHeader, CardTitle } from "../../src/components/ui/card";
 import { Sidebar } from "../../src/components/Sidebar";
@@ -10,49 +11,82 @@ import {
   Calendar,
 } from "lucide-react";
 
+interface Room {
+  id: string | number;
+  number: string | number;
+  type?: string;
+}
+
+interface Stat {
+  title: string;
+  value: string | number;
+  icon: any;
+  change?: string;
+  changeType?: "positive" | "negative" | "neutral";
+}
+
+interface Booking {
+  id: string | number;
+  guest: string;
+  room: Room | null;
+  checkin: string;
+  status: string;
+}
+
+interface Order {
+  id: string | number;
+  table: string;
+  items: string;
+  total: string | number;
+  status: string;
+}
+
 export default function Dashboard() {
-  const stats = [
-    {
-      title: "Total Rooms",
-      value: "45",
-      icon: Building,
-      change: "2 new this month",
-      changeType: "positive" as const,
-    },
-    {
-      title: "Today's Bookings",
-      value: "28",
-      icon: Calendar,
-      change: "+12% from yesterday",
-      changeType: "positive" as const,
-    },
-    {
-      title: "Revenue Today",
-      value: "$12,580",
-      icon: DollarSign,
-      change: "+8% from yesterday",
-      changeType: "positive" as const,
-    },
-    {
-      title: "Active Orders",
-      value: "15",
-      icon: UtensilsCrossed,
-      change: "3 pending",
-      changeType: "neutral" as const,
-    },
-  ];
+  const [stats, setStats] = useState<Stat[]>([]);
+  const [recentBookings, setRecentBookings] = useState<Booking[]>([]);
+  const [recentOrders, setRecentOrders] = useState<Order[]>([]);
 
-  const recentBookings = [
-    { id: "BK001", guest: "John Smith", room: "Deluxe Suite 101", checkin: "Today", status: "Confirmed" },
-    { id: "BK002", guest: "Sarah Johnson", room: "Standard Room 205", checkin: "Tomorrow", status: "Pending" },
-    { id: "BK003", guest: "Mike Davis", room: "Premium Room 304", checkin: "Today", status: "Checked In" },
-  ];
-
-  const recentOrders = [
-    { id: "ORD001", table: "Table 5", items: "2x Caesar Salad, 1x Grilled Salmon", total: "$45.99", status: "In Progress" },
-    { id: "ORD002", table: "Table 12", items: "3x Breakfast Special", total: "$32.97", status: "Completed" },
-    { id: "ORD003", table: "Table 8", items: "1x Ribeye Steak, 2x Wine", total: "$78.50", status: "Pending" },
-  ];
+  useEffect(() => {
+    fetch("http://127.0.0.1:8000/api/dashboard")
+      .then((res) => res.json())
+      .then((data) => {
+        // Map stats to your StatCard structure
+        const statsArray: Stat[] = [
+          {
+            title: "Total Rooms",
+            value: data.stats.totalRooms,
+            icon: Building,
+            change: "2 new this month",
+            changeType: "positive",
+          },
+          {
+            title: "Today's Bookings",
+            value: data.stats.todaysBookings,
+            icon: Calendar,
+            change: "+12% from yesterday",
+            changeType: "positive",
+          },
+          {
+            title: "Revenue Today",
+            value: `$${data.stats.revenueToday}`,
+            icon: DollarSign,
+            change: "+8% from yesterday",
+            changeType: "positive",
+          },
+          {
+            title: "Active Orders",
+            value: data.stats.activeOrders,
+            icon: UtensilsCrossed,
+            change: `${data.stats.activeOrders} pending`,
+            changeType: "neutral",
+          },
+        ];
+        setStats(statsArray);
+        setRecentBookings(data.recentBookings);
+        setRecentOrders(data.recentOrders);
+      })
+      .catch((err) => console.error("Failed to fetch dashboard data:", err));
+  }, []);
 
   return (
     <div className="flex h-screen overflow-hidden">
@@ -87,17 +121,29 @@ export default function Dashboard() {
             <CardContent>
               <div className="space-y-4">
                 {recentBookings.map((booking) => (
-                  <div key={booking.id} className="flex items-center justify-between p-3 bg-secondary rounded-lg">
+                  <div
+                    key={booking.id}
+                    className="flex items-center justify-between p-3 bg-secondary rounded-lg"
+                  >
                     <div>
                       <p className="font-medium">{booking.guest}</p>
-                      <p className="text-sm text-muted-foreground">{booking.room}</p>
-                      <p className="text-xs text-muted-foreground">Check-in: {booking.checkin}</p>
+                    <p className="text-sm text-muted-foreground">
+                      {booking.room ? `Room ${booking.room.number} (${booking.room.type ?? "N/A"})` : "N/A"}
+                    </p>
+
+                      <p className="text-xs text-muted-foreground">
+                        Check-in: {booking.checkin}
+                      </p>
                     </div>
-                    <div className={`px-2 py-1 rounded text-xs font-medium ${
-                      booking.status === "Confirmed" ? "bg-success/20 text-success" :
-                      booking.status === "Checked In" ? "bg-primary/20 text-primary" :
-                      "bg-warning/20 text-warning"
-                    }`}>
+                    <div
+                      className={`px-2 py-1 rounded text-xs font-medium ${
+                        booking.status === "Confirmed"
+                          ? "bg-success/20 text-success"
+                          : booking.status === "Checked In"
+                          ? "bg-primary/20 text-primary"
+                          : "bg-warning/20 text-warning"
+                      }`}
+                    >
                       {booking.status}
                     </div>
                   </div>
@@ -116,17 +162,24 @@ export default function Dashboard() {
             <CardContent>
               <div className="space-y-4">
                 {recentOrders.map((order) => (
-                  <div key={order.id} className="flex items-center justify-between p-3 bg-secondary rounded-lg">
+                  <div
+                    key={order.id}
+                    className="flex items-center justify-between p-3 bg-secondary rounded-lg"
+                  >
                     <div>
                       <p className="font-medium">{order.table}</p>
                       <p className="text-sm text-muted-foreground">{order.items}</p>
                       <p className="text-xs text-muted-foreground">Total: {order.total}</p>
                     </div>
-                    <div className={`px-2 py-1 rounded text-xs font-medium ${
-                      order.status === "Completed" ? "bg-success/20 text-success" :
-                      order.status === "In Progress" ? "bg-warning/20 text-warning" :
-                      "bg-muted/20 text-muted-foreground"
-                    }`}>
+                    <div
+                      className={`px-2 py-1 rounded text-xs font-medium ${
+                        order.status === "Completed"
+                          ? "bg-success/20 text-success"
+                          : order.status === "In Progress"
+                          ? "bg-warning/20 text-warning"
+                          : "bg-muted/20 text-muted-foreground"
+                      }`}
+                    >
                       {order.status}
                     </div>
                   </div>

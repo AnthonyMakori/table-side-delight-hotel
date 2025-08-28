@@ -29,6 +29,7 @@ import KitchenDashboard from "@/components/dashboards/KitchenDashboard";
 import WaiterDashboard from "@/components/dashboards/WaiterDashboard";
 import ForgotPassword from "../pages/auth/forgotPassword";
 import ResetPassword from "../pages/auth/ResetPassword";
+import OrderTracking from "../pages/cart/OrderTracking";
 
 const queryClient = new QueryClient();
 
@@ -53,6 +54,7 @@ const AppContent = () => {
         <Route path="/auth/signin" element={<SignIn />} />
         <Route path="/auth/LoginForm" element={<LoginForm />} />
         <Route path="/cart" element={<Cart />} />
+        <Route path="/cart/OrderTracking" element={<OrderTracking />} />
         <Route path="/menu/Menu" element={<Menu />} />
         <Route path="accommodation/Accommodations" element={<Accommodations />} />
         <Route path="/components/dashboards/ReceptionistDashboard" element={<ReceptionistDashboard />} />

@@ -4,6 +4,7 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
+import axios from "axios";
 import {
   ArrowLeft,
   Minus,
@@ -38,26 +39,57 @@ const Cart = () => {
     }
   };
 
-  const handlePlaceOrder = () => {
-    if (state.items.length === 0) {
-      toast({
-        title: "Cart is empty",
-        description: "Please add some items before placing an order.",
-        variant: "destructive",
-      });
-      return;
-    }
+ const handlePlaceOrder = async () => {
+  if (state.items.length === 0) {
+    toast({
+      title: "Cart is empty",
+      description: "Please add some items before placing an order.",
+      variant: "destructive",
+    });
+    return;
+  }
+
+  try {
+    const payload = {
+      items: state.items.map((item) => ({
+        meal_id: item.id,            
+        quantity: item.quantity,
+        price: item.price,           
+      })),
+      payment_method: paymentMethod,
+    };
+
+    const response = await axios.post(
+      "http://127.0.0.1:8000/api/orders", 
+      payload,
+      {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`, 
+        },
+      }
+    );
 
     toast({
-      title: "Order placed 🎉",
+      title: "Order placed successfully",
       description: `Your order totaling ${formatCurrency(
         state.total
       )} has been placed. Payment method: ${paymentMethod}`,
     });
 
     clearCart();
-    navigate("/");
-  };
+    navigate("/cart/OrderTracking"); 
+
+  } catch (error: any) {
+    console.error(error);
+
+    toast({
+      title: "Order failed",
+      description: error.response?.data?.message || "Something went wrong. Try again.",
+      variant: "destructive",
+    });
+  }
+};
+
 
   if (state.items.length === 0) {
     return (
