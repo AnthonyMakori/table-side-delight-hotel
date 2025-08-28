@@ -22,9 +22,11 @@ const navigation = [
   { name: "Orders", href: "/orders", icon: ClipboardList },
   { name: "Payments", href: "/payments", icon: CreditCard },
   { name: "Staff Management", href: "/staff", icon: Users },
+  { name: "Leave Management", href: "/leave", icon: Building },
   { name: "Departments", href: "/departments", icon: Building },
   { name: "Reports", href: "/reports", icon: BarChart3 },
 ];
+
 
 export function Sidebar() {
     const navigate = useNavigate();
