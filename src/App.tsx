@@ -30,6 +30,7 @@ import WaiterDashboard from "@/components/dashboards/WaiterDashboard";
 import ForgotPassword from "../pages/auth/forgotPassword";
 import ResetPassword from "../pages/auth/ResetPassword";
 import OrderTracking from "../pages/cart/OrderTracking";
+import LeaveManagement from "../pages/Admin/leave";
 
 const queryClient = new QueryClient();
 
@@ -69,6 +70,7 @@ const AppContent = () => {
         <Route path="/orders" element={<Orders />} />
         <Route path="/payments" element={<Payments />} />
         <Route path="/staff" element={<Staff />} />
+          <Route path="/leave" element={<LeaveManagement />} />
         <Route path="/departments" element={<Departments />} />
         <Route path="/reports" element={<Reports />} />
         <Route path="/room/:id" element={<RoomDetail />} />
