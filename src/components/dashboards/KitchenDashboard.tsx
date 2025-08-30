@@ -5,6 +5,9 @@ import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import DashboardLayout from '@/components/layout/DashboardLayout';
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
 import axios from 'axios';
 import { 
   ChefHat, 
@@ -54,6 +57,13 @@ const KitchenDashboard: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState<string>('all');
 
+  const [openLeaveModal, setOpenLeaveModal] = useState(false);
+  const [leaveType, setLeaveType] = useState('');
+  const [startDate, setStartDate] = useState('');
+  const [endDate, setEndDate] = useState('');
+  const [reason, setReason] = useState('');
+  const [submitting, setSubmitting] = useState(false);
+
   // --- Fetch Orders from API ---
   const fetchOrders = async (): Promise<Order[]> => {
     const { data } = await axios.get('http://127.0.0.1:8000/api/orders');
@@ -77,11 +87,24 @@ const KitchenDashboard: React.FC = () => {
       }
     };
     loadOrders();
-    const interval = setInterval(loadOrders, 15000); // auto-refresh every 15s
+    const interval = setInterval(loadOrders, 15000); 
+    return () => clearInterval(interval);
+  }, []);
+  useEffect(() => {
+    const loadOrders = async () => {
+      setLoading(true);
+      try {
+        const data = await fetchOrders();
+        setOrders(data);
+      } finally {
+        setLoading(false);
+      }
+    };
+    loadOrders();
+    const interval = setInterval(loadOrders, 15000);
     return () => clearInterval(interval);
   }, []);
 
-  // --- Handle Status Updates ---
   const handleStartCooking = async (orderId: string) => {
     if (!currentStaff) return;
     const { data } = await axios.post(`http://127.0.0.1:8000/api/orders/${orderId}/assign`);
@@ -98,7 +121,32 @@ const KitchenDashboard: React.FC = () => {
     setOrders(prev => prev.map(o => o.id === data.order.id ? data.order : o));
   };
 
-  // --- Stats ---
+  const handleLeaveSubmit = async () => {
+    if (!currentStaff) return;
+
+    setSubmitting(true);
+    try {
+      await axios.post("http://127.0.0.1:8000/api/leaves", {
+        staff_id: currentStaff.id,
+        type: leaveType,
+        start_date: startDate,
+        end_date: endDate,
+        reason,
+      });
+      setOpenLeaveModal(false);
+      setLeaveType("");
+      setStartDate("");
+      setEndDate("");
+      setReason("");
+      alert("Leave application submitted successfully!");
+    } catch (error) {
+      console.error("Error submitting leave:", error);
+      alert("Failed to apply for leave.");
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
   const stats = {
     newOrders: orders.filter(o => o.status === 'new' || o.status === 'pending').length,
     preparingOrders: orders.filter(o => o.status === 'preparing').length,
@@ -109,7 +157,6 @@ const KitchenDashboard: React.FC = () => {
       : 'N/A',
   };
 
-  // --- Filter & Sort Orders ---
   const filteredOrders = orders.filter(order => {
     const matchesSearch =
       order.table_no?.toString().toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -171,6 +218,68 @@ const KitchenDashboard: React.FC = () => {
           <Button variant="outline" size="sm" onClick={fetchOrders}>
             <RefreshCw className="mr-2 h-4 w-4" /> Refresh
           </Button>
+           <Dialog open={openLeaveModal} onOpenChange={setOpenLeaveModal}>
+            <DialogTrigger asChild>
+              <Button size="sm" className="bg-primary text-white hover:bg-primary/90">
+                Apply Leave
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="sm:max-w-lg">
+              <DialogHeader>
+                <DialogTitle>Apply for Leave</DialogTitle>
+                <DialogDescription>
+                  Fill in the details below to apply for leave. Your role and department are auto-filled.
+                </DialogDescription>
+              </DialogHeader>
+
+              <div className="grid gap-4 py-4">
+                <div>
+                  <Label>Role</Label>
+                  <Input value={currentStaff?.role || ""} disabled />
+                </div>
+                <div>
+                  <Label>Department</Label>
+                  <Input value={currentStaff?.department || ""} disabled />
+                </div>
+                <div>
+                  <Label>Leave Type</Label>
+                  <select
+                    value={leaveType}
+                    onChange={(e) => setLeaveType(e.target.value)}
+                    className="w-full px-3 py-2 border rounded-md"
+                  >
+                    <option value="">Select type</option>
+                    <option value="sick">Sick Leave</option>
+                    <option value="casual">Casual Leave</option>
+                    <option value="annual">Annual Leave</option>
+                  </select>
+                </div>
+                <div className="flex space-x-2">
+                  <div className="flex-1">
+                    <Label>Start Date</Label>
+                    <Input type="date" value={startDate} onChange={(e) => setStartDate(e.target.value)} />
+                  </div>
+                  <div className="flex-1">
+                    <Label>End Date</Label>
+                    <Input type="date" value={endDate} onChange={(e) => setEndDate(e.target.value)} />
+                  </div>
+                </div>
+                <div>
+                  <Label>Reason</Label>
+                  <Textarea value={reason} onChange={(e) => setReason(e.target.value)} placeholder="Enter reason" />
+                </div>
+              </div>
+
+              <DialogFooter>
+                <Button variant="outline" onClick={() => setOpenLeaveModal(false)}>
+                  Cancel
+                </Button>
+                <Button onClick={handleLeaveSubmit} disabled={submitting}>
+                  {submitting ? "Submitting..." : "Submit"}
+                </Button>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
         </div>
       }
     >
