@@ -8,11 +8,12 @@ export interface Staff {
 }
 
 export interface LeaveRequest {
-  id: string;
+id: number | string;
   staffId: string;
   staffName: string;
   staffAvatar?: string;
   type: 'annual' | 'sick' | 'personal' | 'maternity' | 'paternity';
+  department: string;
   startDate: string;
   endDate: string;
   duration: number; 

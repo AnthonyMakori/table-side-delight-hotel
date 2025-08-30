@@ -1,4 +1,5 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
+import axios from 'axios';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -6,7 +7,6 @@ import { Alert, AlertDescription } from '@/components/ui/alert';
 import { StatsCard } from '../../src/components/leave/StatsCard';
 import { LeaveRequestCard } from '../../src/components/leave/LeaveRequestCard';
 import { ConfirmationModal } from '../../src/components/leave/ConfirmationModal';
-import { useLeaveData } from '../../src/hooks/useLeaveData';
 import { useToast } from '@/hooks/use-toast';
 import { Sidebar } from '@/components/Sidebar';
 import { 
@@ -29,9 +29,12 @@ const typeLabels = {
 };
 
 export default function LeaveManagement() {
-  const { leaves, loading, error, updateLeaveStatus, stats } = useLeaveData();
   const { toast } = useToast();
-  
+
+  const [leaves, setLeaves] = useState<LeaveRequest[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState<LeaveStatus | 'all'>('all');
   const [typeFilter, setTypeFilter] = useState<LeaveType | 'all'>('all');
@@ -45,10 +48,69 @@ export default function LeaveManagement() {
     request: null
   });
 
+  useEffect(() => {
+    const fetchLeaves = async () => {
+      try {
+        setLoading(true);
+        const res = await axios.get('http://127.0.0.1:8000/api/leaves');
+        
+        const data = res.data.map((leave: any) => ({
+          id: leave.id,
+          staffId: leave.staff_id,
+          staffName: leave.staff?.name || 'Unknown',
+          department: leave.department || 'Unknown',
+          type: (leave.type?.toLowerCase() || 'personal') as LeaveType,
+          status: leave.status as LeaveStatus,
+          startDate: leave.start_date,
+          endDate: leave.end_date,
+          reason: leave.reason
+        }));
+        
+        setLeaves(data);
+      } catch (err: any) {
+        setError(err.message || 'Failed to fetch leaves');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchLeaves();
+  }, []);
+
+  const updateLeaveStatus = async (id: number, newStatus: LeaveStatus) => {
+    try {
+      await axios.post(`http://127.0.0.1:8000/api/leaves/${id}/status`, {
+        status: newStatus
+      });
+
+      setLeaves((prev) =>
+        prev.map((leave) =>
+          leave.id === id ? { ...leave, status: newStatus } : leave
+        )
+      );
+    } catch (err) {
+      toast({
+        title: "Error",
+        description: "Failed to update leave status",
+        variant: "destructive"
+      });
+    }
+  };
+
+  const stats = useMemo(() => {
+    return {
+      totalRequests: leaves.length,
+      pendingRequests: leaves.filter(l => l.status === 'pending').length,
+      approvedRequests: leaves.filter(l => l.status === 'approved').length,
+      rejectedRequests: leaves.filter(l => l.status === 'rejected').length,
+      currentlyOnLeave: leaves.filter(l => l.status === 'on-leave').length,
+    };
+  }, [leaves]);
+
   const filteredLeaves = useMemo(() => {
     return leaves.filter(leave => {
       const matchesSearch = leave.staffName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                           typeLabels[leave.type].toLowerCase().includes(searchTerm.toLowerCase());
+                           (typeLabels[leave.type]?.toLowerCase() || '').includes(searchTerm.toLowerCase());
       const matchesStatus = statusFilter === 'all' || leave.status === statusFilter;
       const matchesType = typeFilter === 'all' || leave.type === typeFilter;
       
@@ -67,8 +129,7 @@ export default function LeaveManagement() {
   const confirmAction = () => {
     if (confirmModal.request) {
       const action = confirmModal.action === 'approve' ? 'approved' : 'rejected';
-      updateLeaveStatus(confirmModal.request.id, action);
-      
+      updateLeaveStatus(Number(confirmModal.request.id), action as LeaveStatus);
       toast({
         title: `Leave ${action}`,
         description: `${confirmModal.request.staffName}'s leave request has been ${action}.`,
@@ -204,11 +265,16 @@ export default function LeaveManagement() {
           <h2 className="text-xl font-semibold">Leave Requests</h2>
           
           {loading ? (
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-              {Array.from({ length: 4 }).map((_, i) => (
-                <Skeleton key={i} className="h-48" />
-              ))}
-            </div>
+            <div className="grid grid-cols-1 gap-4">
+            {filteredLeaves.map((request) => (
+              <LeaveRequestCard
+                key={request.id}
+                request={request}
+                onApprove={() => handleAction('approve', request)}
+                onReject={() => handleAction('reject', request)}
+              />
+            ))}
+          </div>
           ) : filteredLeaves.length === 0 ? (
             <div className="text-center py-12">
               <Calendar className="mx-auto h-12 w-12 text-muted-foreground mb-4" />
@@ -220,7 +286,7 @@ export default function LeaveManagement() {
               </p>
             </div>
           ) : (
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 lg:grid-cols-1 gap-4">
               {filteredLeaves.map((request) => (
                 <LeaveRequestCard
                   key={request.id}

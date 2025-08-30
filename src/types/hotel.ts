@@ -4,6 +4,7 @@ export interface Staff {
   id: string;
   name: string;
   email: string;
+  department?: string;
   role: StaffRole;
   avatar?: string;
   isActive: boolean;
