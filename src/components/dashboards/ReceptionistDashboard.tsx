@@ -1,109 +1,198 @@
-import React, { useState } from 'react';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Input } from '@/components/ui/input';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import DashboardLayout from '@/components/layout/DashboardLayout';
-import { useHotel } from '../../contexts/HotelContext';
-import { 
-  Bed, 
-  Plus, 
-  Calendar, 
-  Users, 
-  DollarSign, 
+import React, { useState, useEffect } from "react";
+import axios from "axios";
+import {
+  Bed,
+  Plus,
+  Calendar,
+  Users,
+  DollarSign,
   Search,
   Filter,
-  MoreHorizontal,
   Check,
-  X,
   Clock,
   Key,
   Receipt,
   Settings,
-} from 'lucide-react';
-import BookingForm from '@/components/forms/BookingForm';
-import { Room, Booking } from '../../types/hotel';
+  MoreHorizontal,
+} from "lucide-react";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Input } from "@/components/ui/input";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import DashboardLayout from "@/components/layout/DashboardLayout";
+import BookingForm from "@/components/forms/BookingForm";
+
+interface Room {
+  id: number;
+  number: string;
+  type: string;
+  capacity: number;
+  floor?: string;
+  price: number;
+  status: "available" | "occupied" | "maintenance" | "cleaning" | "Taken" | "Available";
+  amenities?: string[];
+}
+
+interface Booking {
+  id: number;
+  guest_name: string;
+  guest_email: string;
+  guest_phone?: string;
+  room_id: number;
+  room?: Room;
+  check_in: string;
+  check_out: string;
+  guests: number;
+  status: "confirmed" | "checked-in" | "checked-out" | "cancelled";
+  total_price: number;
+  special_requests?: string;
+  paymentStatus?: "paid" | "pending" | "refunded";
+}
 
 const ReceptionistDashboard: React.FC = () => {
-  const { bookings, rooms, updateBooking, updateRoom } = useHotel();
-  const [searchTerm, setSearchTerm] = useState('');
+  const BASE_URL = "http://127.0.0.1:8000/api";
+
+  const [rooms, setRooms] = useState<Room[]>([]);
+  const [bookings, setBookings] = useState<Booking[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [searchTerm, setSearchTerm] = useState("");
   const [showBookingForm, setShowBookingForm] = useState(false);
   const [selectedBooking, setSelectedBooking] = useState<Booking | null>(null);
 
+  // ✅ Fetch rooms and bookings
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const [roomsRes, bookingsRes] = await Promise.all([
+          axios.get(`${BASE_URL}/rooms`),
+          axios.get(`${BASE_URL}/bookings`),
+        ]);
+
+        setRooms(roomsRes.data);
+        setBookings(bookingsRes.data);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  const updateRoom = async (id: number, data: Partial<Room>) => {
+    try {
+      await axios.put(`${BASE_URL}/rooms/${id}`, data);
+      setRooms((prev) => prev.map((r) => (r.id === id ? { ...r, ...data } : r)));
+    } catch (error) {
+      console.error("Error updating room:", error);
+    }
+  };
+
+  const updateBooking = async (id: number, data: Partial<Booking>) => {
+    try {
+      await axios.put(`${BASE_URL}/bookings/${id}`, data);
+      setBookings((prev) => prev.map((b) => (b.id === id ? { ...b, ...data } : b)));
+    } catch (error) {
+      console.error("Error updating booking:", error);
+    }
+  };
+
+  // ✅ Handle check-in and check-out
+  const handleCheckIn = async (booking: Booking) => {
+    await updateBooking(booking.id, { status: "checked-in" });
+    await updateRoom(booking.room_id, { status: "occupied" });
+  };
+
+  const handleCheckOut = async (booking: Booking) => {
+    await updateBooking(booking.id, { status: "checked-out" });
+    await updateRoom(booking.room_id, { status: "cleaning" });
+  };
+
+  // ✅ Filter bookings (by guest or room number)
+  const filteredBookings = bookings.filter((b) => {
+    const guestName = b.guest_name?.toLowerCase() || "";
+    const roomNumber = b.room?.number?.toLowerCase() || "";
+    const search = searchTerm.toLowerCase();
+    return guestName.includes(search) || roomNumber.includes(search);
+  });
+
+  // ✅ Dashboard stats
   const stats = {
     totalRooms: rooms.length,
-    availableRooms: rooms.filter(r => r.status === 'available').length,
-    occupiedRooms: rooms.filter(r => r.status === 'occupied').length,
-    todayCheckIns: bookings.filter(b => {
-      const today = new Date().toDateString();
-      return new Date(b.checkInDate).toDateString() === today;
-    }).length,
-    todayCheckOuts: bookings.filter(b => {
-      const today = new Date().toDateString();
-      return new Date(b.checkOutDate).toDateString() === today;
-    }).length,
-    pendingPayments: bookings.filter(b => b.paymentStatus === 'pending').length,
+    availableRooms: rooms.filter(
+      (r) => r.status.toLowerCase() === "available"
+    ).length,
+    occupiedRooms: rooms.filter(
+      (r) => r.status.toLowerCase() === "occupied" || r.status.toLowerCase() === "taken"
+    ).length,
+    todayCheckIns: bookings.filter(
+      (b) =>
+        new Date(b.check_in).toDateString() === new Date().toDateString()
+    ).length,
+    todayCheckOuts: bookings.filter(
+      (b) =>
+        new Date(b.check_out).toDateString() === new Date().toDateString()
+    ).length,
+    pendingPayments: bookings.filter(
+      (b) => b.paymentStatus === "pending"
+    ).length,
   };
 
-  const filteredBookings = bookings.filter(booking =>
-    booking.guest.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    booking.room.number.includes(searchTerm) ||
-    booking.id.includes(searchTerm)
-  );
-
-  const handleCheckIn = (booking: Booking) => {
-    updateBooking(booking.id, { status: 'checked-in' });
-    updateRoom(booking.roomId, { status: 'occupied' });
-  };
-
-  const handleCheckOut = (booking: Booking) => {
-    updateBooking(booking.id, { status: 'checked-out' });
-    updateRoom(booking.roomId, { status: 'cleaning' });
-  };
-
-  const getRoomStatusColor = (status: Room['status']) => {
-    switch (status) {
-      case 'available':
-        return 'bg-success text-success-foreground';
-      case 'occupied':
-        return 'bg-destructive text-destructive-foreground';
-      case 'maintenance':
-        return 'bg-warning text-warning-foreground';
-      case 'cleaning':
-        return 'bg-info text-info-foreground';
+  // ✅ Badge color helpers
+  const getRoomStatusColor = (status: Room["status"]) => {
+    switch (status.toLowerCase()) {
+      case "available":
+        return "bg-green-500 text-white";
+      case "occupied":
+      case "taken":
+        return "bg-red-500 text-white";
+      case "maintenance":
+        return "bg-yellow-500 text-white";
+      case "cleaning":
+        return "bg-blue-400 text-white";
       default:
-        return 'bg-secondary text-secondary-foreground';
+        return "bg-gray-400 text-white";
     }
   };
 
-  const getBookingStatusColor = (status: Booking['status']) => {
+  const getBookingStatusColor = (status: Booking["status"]) => {
     switch (status) {
-      case 'confirmed':
-        return 'bg-info text-info-foreground';
-      case 'checked-in':
-        return 'bg-success text-success-foreground';
-      case 'checked-out':
-        return 'bg-secondary text-secondary-foreground';
-      case 'cancelled':
-        return 'bg-destructive text-destructive-foreground';
+      case "confirmed":
+        return "bg-blue-400 text-white";
+      case "checked-in":
+        return "bg-green-500 text-white";
+      case "checked-out":
+        return "bg-gray-500 text-white";
+      case "cancelled":
+        return "bg-red-500 text-white";
       default:
-        return 'bg-secondary text-secondary-foreground';
+        return "bg-gray-400 text-white";
     }
   };
 
-  const getPaymentStatusColor = (status: Booking['paymentStatus']) => {
+  const getPaymentStatusColor = (status?: Booking["paymentStatus"]) => {
     switch (status) {
-      case 'paid':
-        return 'bg-success text-success-foreground';
-      case 'pending':
-        return 'bg-warning text-warning-foreground';
-      case 'refunded':
-        return 'bg-info text-info-foreground';
+      case "paid":
+        return "bg-green-600 text-white";
+      case "pending":
+        return "bg-yellow-500 text-white";
+      case "refunded":
+        return "bg-blue-400 text-white";
       default:
-        return 'bg-secondary text-secondary-foreground';
+        return "bg-gray-400 text-white";
     }
   };
+
+  if (loading)
+    return <div className="p-8 text-center">Loading data...</div>;
 
   return (
     <DashboardLayout
@@ -112,100 +201,101 @@ const ReceptionistDashboard: React.FC = () => {
       actions={
         <Button
           onClick={() => setShowBookingForm(true)}
-          className="bg-blue-600 hover:shadow-hotel"
+          className="bg-blue-600 text-white"
         >
           <Plus className="mr-2 h-4 w-4" />
           New Booking
         </Button>
       }
     >
-      {/* Stats Cards */}
+      {/* ========== Stats Cards ========== */}
       <div className="grid grid-cols-2 lg:grid-cols-6 gap-4 mb-6">
-        <Card className="bg-gradient-to-r from-blue-600 to-blue-700 text-primary-foreground shadow-hotel">
+        <Card className="bg-blue-700 text-white">
           <CardContent className="p-4">
-            <div className="flex items-center justify-between">
+            <div className="flex justify-between items-center">
               <div>
-                <p className="text-primary-foreground/80 text-sm">Total Rooms</p>
+                <p>Total Rooms</p>
                 <p className="text-2xl font-bold">{stats.totalRooms}</p>
               </div>
-              <Bed className="h-8 w-8 text-primary-foreground/80" />
+              <Bed className="h-8 w-8" />
             </div>
           </CardContent>
         </Card>
 
-        <Card className="bg-gradient-to-r from-green-600 to-emerald-600 text-success-foreground">
+        <Card className="bg-green-600 text-white">
           <CardContent className="p-4">
-            <div className="flex items-center justify-between">
+            <div className="flex justify-between items-center">
               <div>
-                <p className="text-success-foreground/80 text-sm">Available</p>
+                <p>Available</p>
                 <p className="text-2xl font-bold">{stats.availableRooms}</p>
               </div>
-              <Key className="h-8 w-8 text-success-foreground/80" />
+              <Key className="h-8 w-8" />
             </div>
           </CardContent>
         </Card>
 
-        <Card className="bg-gradient-to-r from-destructive to-red-600 text-destructive-foreground">
+        <Card className="bg-red-600 text-white">
           <CardContent className="p-4">
-            <div className="flex items-center justify-between">
+            <div className="flex justify-between items-center">
               <div>
-                <p className="text-destructive-foreground/80 text-sm">Occupied</p>
+                <p>Occupied</p>
                 <p className="text-2xl font-bold">{stats.occupiedRooms}</p>
               </div>
-              <Users className="h-8 w-8 text-destructive-foreground/80" />
+              <Users className="h-8 w-8" />
             </div>
           </CardContent>
         </Card>
 
-        <Card className="bg-gradient-to-r from-blue-300 to-blue-600 text-info-foreground">
+        <Card className="bg-blue-500 text-white">
           <CardContent className="p-4">
-            <div className="flex items-center justify-between">
+            <div className="flex justify-between items-center">
               <div>
-                <p className="text-info-foreground/80 text-sm">Check-ins</p>
+                <p>Check-ins</p>
                 <p className="text-2xl font-bold">{stats.todayCheckIns}</p>
               </div>
-              <Calendar className="h-8 w-8 text-info-foreground/80" />
+              <Calendar className="h-8 w-8" />
             </div>
           </CardContent>
         </Card>
 
-        <Card className="bg-gradient-to-r from-warning to-orange-600 text-warning-foreground">
+        <Card className="bg-yellow-600 text-white">
           <CardContent className="p-4">
-            <div className="flex items-center justify-between">
+            <div className="flex justify-between items-center">
               <div>
-                <p className="text-warning-foreground/80 text-sm">Check-outs</p>
+                <p>Check-outs</p>
                 <p className="text-2xl font-bold">{stats.todayCheckOuts}</p>
               </div>
-              <Clock className="h-8 w-8 text-warning-foreground/80" />
+              <Clock className="h-8 w-8" />
             </div>
           </CardContent>
         </Card>
 
-        <Card className="bg-yellow-500 text-accent-foreground">
+        <Card className="bg-orange-500 text-white">
           <CardContent className="p-4">
-            <div className="flex items-center justify-between">
+            <div className="flex justify-between items-center">
               <div>
-                <p className="text-accent-foreground/80 text-sm">Pending Pay</p>
+                <p>Pending Payments</p>
                 <p className="text-2xl font-bold">{stats.pendingPayments}</p>
               </div>
-              <DollarSign className="h-8 w-8 text-accent-foreground/80" />
+              <DollarSign className="h-8 w-8" />
             </div>
           </CardContent>
         </Card>
       </div>
 
+      {/* ========== Tabs ========== */}
       <Tabs defaultValue="bookings" className="space-y-4">
-        <TabsList className="grid w-full grid-cols-2">
-          <TabsTrigger value="bookings">Bookings Management</TabsTrigger>
-          <TabsTrigger value="rooms">Room Status</TabsTrigger>
+        <TabsList className="grid grid-cols-2 w-full">
+          <TabsTrigger value="bookings">Bookings</TabsTrigger>
+          <TabsTrigger value="rooms">Rooms</TabsTrigger>
         </TabsList>
 
+        {/* ===== Bookings Tab ===== */}
         <TabsContent value="bookings" className="space-y-4">
-          {/* Search and Filters */}
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-2">
+          <div className="flex justify-between items-center">
+            <div className="flex space-x-2">
               <div className="relative">
-                <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
+                <Search className="absolute left-2 top-2.5 h-4 w-4 text-gray-400" />
                 <Input
                   placeholder="Search bookings..."
                   value={searchTerm}
@@ -220,152 +310,123 @@ const ReceptionistDashboard: React.FC = () => {
             </div>
           </div>
 
-          {/* Bookings List */}
-          <div className="space-y-4">
-            {filteredBookings.map((booking) => (
-              <Card key={booking.id} className="shadow-card-soft hover:shadow-hotel transition-shadow">
-                <CardContent className="p-6">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center space-x-4">
-                      <div className="bg-gradient-hotel rounded-lg p-3">
-                        <Users className="h-6 w-6 text-primary-foreground" />
-                      </div>
-                      <div>
-                        <h3 className="font-semibold text-lg">{booking.guest.name}</h3>
-                        <div className="flex items-center space-x-4 text-sm text-muted-foreground">
-                          <span>Room {booking.room.number}</span>
-                          <span>•</span>
-                          <span>{booking.numberOfGuests} guests</span>
-                          <span>•</span>
-                          <span>Booking #{booking.id.slice(-6)}</span>
-                        </div>
-                      </div>
+          {filteredBookings.map((booking) => (
+            <Card key={booking.id} className="shadow hover:shadow-lg transition">
+              <CardContent className="p-6">
+                <div className="flex justify-between items-center flex-wrap gap-3">
+                  <div className="flex items-center space-x-4">
+                    <div className="bg-blue-100 p-3 rounded">
+                      <Users className="h-6 w-6 text-blue-700" />
                     </div>
-
-                    <div className="flex items-center space-x-4">
-                      <div className="text-right">
-                        <div className="text-sm text-muted-foreground">Check-in / Check-out</div>
-                        <div className="font-medium">
-                          {new Date(booking.checkInDate).toLocaleDateString()} - {new Date(booking.checkOutDate).toLocaleDateString()}
-                        </div>
-                      </div>
-
-                      <div className="flex flex-col space-y-2">
-                        <Badge className={getBookingStatusColor(booking.status)}>
-                          {booking.status.replace('-', ' ').toUpperCase()}
-                        </Badge>
-                        <Badge className={getPaymentStatusColor(booking.paymentStatus)}>
-                          {booking.paymentStatus.toUpperCase()}
-                        </Badge>
-                      </div>
-
-                      <div className="flex items-center space-x-2">
-                        {booking.status === 'confirmed' && (
-                          <Button
-                            size="sm"
-                            variant="outline"
-                            onClick={() => handleCheckIn(booking)}
-                            className="text-success hover:bg-success hover:text-success-foreground"
-                          >
-                            <Check className="mr-1 h-4 w-4" />
-                            Check In
-                          </Button>
-                        )}
-                        
-                        {booking.status === 'checked-in' && (
-                          <Button
-                            size="sm"
-                            variant="outline"
-                            onClick={() => handleCheckOut(booking)}
-                            className="text-info hover:bg-info hover:text-info-foreground"
-                          >
-                            <Key className="mr-1 h-4 w-4" />
-                            Check Out
-                          </Button>
-                        )}
-
-                        <Button size="sm" variant="outline">
-                          <Receipt className="mr-1 h-4 w-4" />
-                          Receipt
-                        </Button>
-
-                        <Button size="sm" variant="ghost">
-                          <MoreHorizontal className="h-4 w-4" />
-                        </Button>
-                      </div>
-                    </div>
-                  </div>
-
-                  {booking.notes && (
-                    <div className="mt-4 p-3 bg-muted rounded-lg">
-                      <p className="text-sm text-muted-foreground">
-                        <span className="font-medium">Notes:</span> {booking.notes}
+                    <div>
+                      <h3 className="font-semibold text-lg">{booking.guest_name}</h3>
+                      <p className="text-sm text-gray-500">
+                        Room {booking.room?.number || booking.room_id} • {booking.guests} guests
                       </p>
                     </div>
-                  )}
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        </TabsContent>
+                  </div>
 
-        <TabsContent value="rooms" className="space-y-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-            {rooms.map((room) => (
-              <Card key={room.id} className="shadow-card-soft hover:shadow-hotel transition-shadow">
-                <CardHeader className="pb-3">
-                  <div className="flex items-center justify-between">
-                    <CardTitle className="text-lg">Room {room.number}</CardTitle>
-                    <Badge className={getRoomStatusColor(room.status)}>
-                      {room.status.toUpperCase()}
+                  <div className="flex items-center space-x-2">
+                    <Badge className={getBookingStatusColor(booking.status)}>
+                      {booking.status.toUpperCase()}
+                    </Badge>
+                    <Badge className={getPaymentStatusColor(booking.paymentStatus)}>
+                      {(booking.paymentStatus || "N/A").toUpperCase()}
                     </Badge>
                   </div>
-                  <CardDescription>
-                    Floor {room.floor} • {room.type} • ${room.price}/night
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-3">
-                    <div>
-                      <p className="text-sm font-medium text-muted-foreground mb-2">Amenities</p>
-                      <div className="flex flex-wrap gap-1">
-                        {room.amenities.map((amenity, index) => (
-                          <Badge key={index} variant="secondary" className="text-xs ">
-                            {amenity}
-                          </Badge>
-                        ))}
-                      </div>
-                    </div>
 
-                    <div className="flex space-x-2">
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        className="flex-1"
-                        onClick={() => updateRoom(room.id, { 
-                          status: room.status === 'available' ? 'maintenance' : 'available' 
-                        })}
-                      >
-                        <Settings className="mr-1 h-4 w-4" />
-                        {room.status === 'available' ? 'Maintenance' : 'Available'}
+                  <div className="flex space-x-2">
+                    {booking.status === "confirmed" && (
+                      <Button size="sm" onClick={() => handleCheckIn(booking)}>
+                        <Check className="mr-1 h-4 w-4" /> Check In
                       </Button>
-                      
-                      {room.status === 'cleaning' && (
-                        <Button
-                          size="sm"
-                          onClick={() => updateRoom(room.id, { status: 'available' })}
-                          className="flex-1"
-                        >
-                          <Check className="mr-1 h-4 w-4" />
-                          Ready
-                        </Button>
-                      )}
+                    )}
+                    {booking.status === "checked-in" && (
+                      <Button size="sm" onClick={() => handleCheckOut(booking)}>
+                        <Key className="mr-1 h-4 w-4" /> Check Out
+                      </Button>
+                    )}
+                    <Button size="sm" variant="outline">
+                      <Receipt className="mr-1 h-4 w-4" /> Receipt
+                    </Button>
+                    <Button size="sm" variant="ghost">
+                      <MoreHorizontal className="h-4 w-4" />
+                    </Button>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          ))}
+        </TabsContent>
+
+        {/* ===== Rooms Tab ===== */}
+        <TabsContent
+          value="rooms"
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"
+        >
+          {rooms.map((room) => (
+            <Card key={room.id} className="shadow hover:shadow-lg transition">
+              <CardHeader>
+                <div className="flex justify-between items-center">
+                  <CardTitle>Room {room.number}</CardTitle>
+                  <Badge className={getRoomStatusColor(room.status)}>
+                    {room.status.toUpperCase()}
+                  </Badge>
+                </div>
+                <CardDescription>
+                  {room.floor ? `Floor ${room.floor} • ` : ""}
+                  {room.type} • ${room.price}/night
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                {room.amenities && room.amenities.length > 0 && (
+                  <div className="mb-2">
+                    <p className="font-medium text-sm mb-1">Amenities:</p>
+                    <div className="flex flex-wrap gap-1">
+                      {room.amenities.map((a, i) => (
+                        <Badge key={i} variant="secondary" className="text-xs">
+                          {a}
+                        </Badge>
+                      ))}
                     </div>
                   </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
+                )}
+                <div className="flex space-x-2">
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    className="flex-1"
+                    onClick={() =>
+                      updateRoom(room.id, {
+                        status:
+                          room.status === "available" ||
+                          room.status === "Available"
+                            ? "maintenance"
+                            : "available",
+                      })
+                    }
+                  >
+                    <Settings className="mr-1 h-4 w-4" />
+                    {room.status === "available" ||
+                    room.status === "Available"
+                      ? "Maintenance"
+                      : "Available"}
+                  </Button>
+                  {room.status === "cleaning" && (
+                    <Button
+                      size="sm"
+                      className="flex-1"
+                      onClick={() =>
+                        updateRoom(room.id, { status: "available" })
+                      }
+                    >
+                      <Check className="mr-1 h-4 w-4" /> Ready
+                    </Button>
+                  )}
+                </div>
+              </CardContent>
+            </Card>
+          ))}
         </TabsContent>
       </Tabs>
 

@@ -23,7 +23,7 @@ const SignIn = () => {
 
       const { token, user } = res.data;
 
-      // Save token locally (prefer HttpOnly cookies in production)
+      // Save token locally 
       localStorage.setItem("token", token);
       localStorage.setItem("user", JSON.stringify(user));
 
